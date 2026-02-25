@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Membresia activada | BlackForge</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white min-h-screen flex items-center justify-center p-4">
+  <main class="w-full max-w-2xl border border-red-500/30 rounded-2xl p-6 bg-zinc-900"><div class="mb-4 flex items-center gap-3"><img src="./imagenes/logo.png" alt="BlackForge logo" class="w-11 h-11 rounded-lg object-cover border border-zinc-700 bg-black/30" onerror="this.style.display='none';" /><p class="text-xs tracking-[2px] text-zinc-400">BLACKFORGE ENTERTAINMENT SOFTWARE</p></div>
+    <h1 class="text-3xl font-bold">Activa tu cuenta de membresia</h1>
+    <p class="text-zinc-300 mt-2">Completa registro para ligar el pago de Stripe a tu cuenta.</p>
+
+    <form id="register-form" class="mt-5 grid sm:grid-cols-2 gap-3">
+      <input id="reg-email" type="email" placeholder="Email" class="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2" required>
+      <input id="reg-pass" type="password" placeholder="Contrasena (min 8)" class="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2" required>
+      <button class="sm:col-span-2 px-4 py-2 bg-red-600 rounded-lg">Registrar membresia</button>
+    </form>
+
+    <p id="reg-status" class="mt-4 text-zinc-300"></p>
+    <a href="./membresia.html" class="inline-block mt-6 px-4 py-2 bg-red-700 rounded-lg">Ir a membresia</a>
+  </main>
+
+  <script>
+    const MEMBER_TOKEN_KEY = "bf_member_token";
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get("session_id");
+    const form = document.getElementById("register-form");
+    const statusEl = document.getElementById("reg-status");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      try {
+        if (!sessionId) throw new Error("session_id faltante");
+        const email = document.getElementById("reg-email").value.trim();
+        const password = document.getElementById("reg-pass").value;
+
+        const res = await fetch("/api/membership/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId, email, password })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "No se pudo registrar membresia");
+
+        localStorage.setItem(MEMBER_TOKEN_KEY, data.token);
+        statusEl.textContent = "Membresia registrada. Ya puedes entrar y descargar.";
+      } catch (error) {
+        statusEl.textContent = error.message;
+      }
+    });
+  </script>
+</body>
+</html>
+
+

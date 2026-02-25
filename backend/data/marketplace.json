@@ -1,0 +1,100 @@
+{
+  "games": [
+    {
+      "id": "aki-world",
+      "title": "Aki vs. El Mundo",
+      "genre": "RPG Lineal",
+      "description": "RPG Lineal de aventuras sobre un borracho local :3",
+      "price": 139.99,
+      "stripePriceId": "price_game_aki_world",
+      "image": "./imagenes/aki-mundo.png"
+    },
+    {
+      "id": "pk-abd",
+      "title": "Projekt: Abandonment",
+      "genre": "Thriller de Terror",
+      "description": "Thriller de terror psicologico donde exploras la vida de Alex, un chico que poco a poco lo va perdiendo todo.",
+      "price": 124.99,
+      "stripePriceId": "price_game_pkabd",
+      "image": "./imagenes/pkabd.jpg"
+    },
+    {
+      "id": "ko-gen",
+      "title": "La caida de Kogen",
+      "genre": "RPG Lineal",
+      "description": "La version alternativa de Aki vs. El Mundo, mismo concepto pero diferente historia",
+      "price": 140,
+      "stripePriceId": "price_game_kogen",
+      "image": "./imagenes/kogen.jpg"
+    }
+  ],
+  "memberships": [
+    {
+      "id": "bf-golden",
+      "name": "BF: Golden",
+      "interval": "mes",
+      "price": 120.99,
+      "stripePriceId": "price_pass_bf_golden",
+      "tier": "Base",
+      "highlight": "Experimenta La Forga a su maximo esplendor",
+      "perks": [
+        "Acceso al catalogo base",
+        "Pruebas anticipadas de nuevos builds",
+        "10% de descuento en compras"
+      ]
+    },
+    {
+      "id": "bf-nocturna",
+      "name": "BF: Nocturna",
+      "interval": "mes",
+      "price": 200,
+      "stripePriceId": "price_pass_bf_nocturna",
+      "tier": "Pro",
+      "highlight": "La Forja Nocturna abre sus puertas a los miembros mas exclusivos",
+      "perks": [
+        "Todo lo de BF Golden",
+        "Lanzamientos dia 1",
+        "Contenido adicional exclusivo",
+        "Prioridad en servidores y eventos"
+      ]
+    },
+    {
+      "id": "bf-golden-anual",
+      "name": "BF: Golden",
+      "interval": "ano",
+      "price": 500,
+      "stripePriceId": "price_pass_bf_golden_year",
+      "tier": "Base",
+      "highlight": "La experiencia Golden para los que prefieren un pago Anual",
+      "perks": [
+        "todo lo de BF: Golden pero por año"
+      ]
+    }
+  ],
+  "coupons": [
+    {
+      "code": "FORJA10",
+      "type": "percent",
+      "value": 10,
+      "description": "10% de descuento en juegos del marketplace",
+      "active": true,
+      "expires": "2026-12-31"
+    },
+    {
+      "code": "NUEVO5",
+      "type": "fixed",
+      "value": 15,
+      "description": "$15 MXN de descuento en compra total",
+      "active": true,
+      "expires": "2026-08-31"
+    },
+    {
+      "code": "AKINOKOGEN",
+      "type": "percent",
+      "value": 5,
+      "description": "5% de descuento en todas las compras",
+      "active": true,
+      "expires": "2026-08-31"
+    }
+  ]
+}

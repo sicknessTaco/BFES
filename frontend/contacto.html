@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackForge | Contacto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>window.tailwind = window.tailwind || {};</script>
+  <script>
+    tailwind.config = { theme: { extend: { fontFamily: { display: ["Orbitron", "sans-serif"], body: ["Rajdhani", "sans-serif"] }, colors: { coal: "#070707", crimson: "#D80B17", ember: "#FF4D4D", wine: "#52060A" } } } };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>.glass{background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.03));backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12)}</style>
+</head>
+<body class="bg-coal text-white font-body min-h-screen">
+  <div class="fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute -top-24 -left-20 w-[32rem] h-[32rem] bg-crimson/20 blur-3xl rounded-full"></div>
+    <div class="absolute top-1/2 right-0 w-[28rem] h-[28rem] bg-wine/60 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+    <nav class="glass rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+      <div class="flex items-center gap-3"><img src="./imagenes/logo.png" alt="BlackForge logo" class="w-10 h-10 rounded-lg object-cover border border-white/20 bg-black/30" onerror="this.style.display='none';this.nextElementSibling.style.marginLeft='0';" /><p class="font-display text-lg tracking-[2px]">BLACKFORGE ENTERTAINMENT SOFTWARE</p></div>
+      <div class="flex flex-wrap gap-3 text-sm sm:text-base">
+        <a href="./index.html" class="hover:text-ember">Inicio</a>
+        <a href="./juegos.html" class="hover:text-ember">Juegos</a>
+        <a href="./membresia.html" class="hover:text-ember">Membresia</a>
+        <a href="./nosotros.html" class="hover:text-ember">Nosotros</a>
+        <a href="./contacto.html" class="text-ember">Contacto</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 pb-16 space-y-6">
+    <section class="glass rounded-3xl p-6 sm:p-8">
+      <h1 class="font-display text-4xl">Contacto</h1>
+      <p class="text-zinc-300 mt-2">Escribenos para prensa, soporte tecnico o propuestas.</p>
+
+      <form id="contact-form" class="mt-6 space-y-4">
+        <div>
+          <label class="block mb-1">Nombre</label>
+          <input id="name" name="name" required class="w-full bg-black/30 border border-white/20 rounded-xl px-3 py-2 outline-none focus:border-ember" />
+        </div>
+        <div>
+          <label class="block mb-1">Email</label>
+          <input id="email" name="email" type="email" required class="w-full bg-black/30 border border-white/20 rounded-xl px-3 py-2 outline-none focus:border-ember" />
+        </div>
+        <div>
+          <label class="block mb-1">Mensaje</label>
+          <textarea id="message" name="message" rows="5" required class="w-full bg-black/30 border border-white/20 rounded-xl px-3 py-2 outline-none focus:border-ember"></textarea>
+        </div>
+        <button id="send-btn" class="px-5 py-3 rounded-full bg-crimson hover:bg-red-600">Enviar mensaje</button>
+      </form>
+
+      <p id="form-status" class="mt-4 text-zinc-300"></p>
+    </section>
+
+    <section class="glass rounded-3xl p-6 sm:p-8">
+      <h2 class="font-display text-3xl">Redes sociales (espacios editables)</h2>
+      <p class="text-zinc-300 mt-2">Pega tus links en estos botones cuando los tengas listos.</p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-5">
+        <a href="#" class="rounded-xl border border-white/20 px-4 py-3 hover:border-ember">Facebook (Principal)</a>
+        <a href="#" class="rounded-xl border border-white/20 px-4 py-3 hover:border-ember">Instagram</a>
+        <a href="#" class="rounded-xl border border-white/20 px-4 py-3 hover:border-ember">YouTube</a>
+        <a href="#" class="rounded-xl border border-white/20 px-4 py-3 hover:border-ember">Facebook (Comunidad)</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="./contacto.js"></script>
+</body>
+</html>
+

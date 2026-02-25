@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackForge Entertainment Software | Inicio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>window.tailwind = window.tailwind || {};</script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { display: ["Orbitron", "sans-serif"], body: ["Rajdhani", "sans-serif"] },
+          colors: { coal: "#070707", crimson: "#D80B17", ember: "#FF4D4D", wine: "#52060A" },
+          keyframes: {
+            floaty: { "0%,100%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-10px)" } },
+            pulseAura: { "0%,100%": { boxShadow: "0 0 0 rgba(216,11,23,0)" }, "50%": { boxShadow: "0 0 32px rgba(216,11,23,.35)" } }
+          },
+          animation: { floaty: "floaty 5s ease-in-out infinite", pulseAura: "pulseAura 2.4s ease-in-out infinite" }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    .glass{background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.03));backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12)}
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
+    .reveal.on{opacity:1;transform:translateY(0)}
+  </style>
+</head>
+<body class="bg-coal text-white font-body min-h-screen">
+  <div class="fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute -top-24 -left-20 w-[32rem] h-[32rem] bg-crimson/20 blur-3xl rounded-full"></div>
+    <div class="absolute top-1/2 right-0 w-[28rem] h-[28rem] bg-wine/60 blur-3xl rounded-full"></div>
+  </div>
+  <header class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+    <nav class="glass rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+      <div class="flex items-center gap-3"><img src="./imagenes/logo.png" alt="BlackForge logo" class="w-10 h-10 rounded-lg object-cover border border-white/20 bg-black/30" onerror="this.style.display='none';this.nextElementSibling.style.marginLeft='0';" /><p class="font-display text-lg tracking-[2px]">BLACKFORGE ENTERTAINMENT SOFTWARE</p></div>
+      <div class="flex flex-wrap gap-3 text-sm sm:text-base">
+        <a href="./index.html" class="text-ember">Inicio</a>
+        <a href="./juegos.html" class="hover:text-ember">Juegos</a>
+        <a href="./membresia.html" class="hover:text-ember">Membresia</a>
+        <a href="./nosotros.html" class="hover:text-ember">Nosotros</a>
+        <a href="./contacto.html" class="hover:text-ember">Contacto</a>
+      </div>
+    </nav>
+  </header>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-16 space-y-8">
+    <section class="glass rounded-3xl p-8 reveal" data-reveal>
+      <p class="text-ember tracking-[3px] uppercase text-xs">Estudio propio</p>
+      <h1 class="font-display text-4xl sm:text-5xl mt-3">Tienda oficial + membresias con identidad</h1>
+      <p id="editable-hero-quote" class="text-zinc-300 mt-4 text-lg">...</p>
+      <div class="mt-6 flex gap-3 flex-wrap">
+        <a href="./juegos.html" class="px-5 py-3 rounded-full bg-crimson hover:bg-red-600 animate-pulseAura">Ver juegos</a>
+        <a href="./membresia.html" class="px-5 py-3 rounded-full border border-white/30 hover:border-ember">Ver membresias</a>
+      </div>
+      <p id="editable-announce" class="mt-5 text-amber-300 text-sm"></p>
+    </section>
+
+    <section class="grid md:grid-cols-2 gap-4 reveal" data-reveal>
+      <article class="glass rounded-2xl p-5 border border-amber-300/40 animate-floaty">
+        <h2 class="font-display text-2xl text-amber-300">BF Golden</h2>
+        <p class="text-zinc-300 mt-1">Acceso base estilo EA Play con ventajas clave.</p>
+      </article>
+      <article class="glass rounded-2xl p-5 border border-red-400/60 shadow-[0_0_35px_rgba(216,11,23,.3)] animate-floaty" style="animation-delay:.35s">
+        <h2 class="font-display text-2xl text-red-300">BF: Nocturna</h2>
+        <p class="text-zinc-300 mt-1">Version pro: dia 1, extras exclusivos y prioridad total.</p>
+      </article>
+    </section>
+
+    <section class="glass rounded-3xl p-6 reveal" data-reveal>
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <div>
+          <h2 class="font-display text-3xl">Universo BlackForge</h2>
+          <p class="text-zinc-300">Bloque editable para que metas lore y novedades cuando quieras.</p>
+        </div>
+        <a href="./juegos.html#editor-zone" class="px-4 py-2 rounded-full border border-red-400/50 hover:border-red-300">Editar contenido</a>
+      </div>
+      <div id="home-universe-cards" class="grid md:grid-cols-3 gap-4 mt-5"></div>
+    </section>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 pb-8">
+    <section class="glass rounded-2xl p-4">
+      <p class="text-zinc-400 text-sm">Acceso interno</p>
+      <div class="mt-2 flex flex-col sm:flex-row gap-2">
+        <input id="admin-phrase" class="flex-1 bg-black/30 border border-white/20 rounded-lg px-3 py-2" placeholder="Combinacion" />
+        <button id="admin-phrase-btn" class="px-4 py-2 rounded-lg border border-white/20 hover:border-ember">Validar</button>
+      </div>
+      <p id="admin-phrase-status" class="text-zinc-400 text-sm mt-2"></p>
+      <div id="admin-login" class="hidden mt-3 grid sm:grid-cols-3 gap-2">
+        <input id="admin-user" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" placeholder="Usuario" />
+        <input id="admin-pass" type="password" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" placeholder="Contrasena" />
+        <button id="admin-login-btn" class="rounded-lg bg-gradient-to-r from-red-700 to-red-500 hover:brightness-110 px-4 py-2">Ir a admin</button>
+      </div>
+    </section>
+  </footer>
+
+  <script src="./editable-content.js"></script>
+  <script src="./app.js"></script>
+  <script src="./admin-gate.js"></script>
+</body>
+</html>
+

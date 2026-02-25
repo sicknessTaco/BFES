@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pago completado | BlackForge</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white min-h-screen flex items-center justify-center p-4">
+  <main class="w-full max-w-2xl border border-red-500/30 rounded-2xl p-6 bg-zinc-900"><div class="mb-4 flex items-center gap-3"><img src="./imagenes/logo.png" alt="BlackForge logo" class="w-11 h-11 rounded-lg object-cover border border-zinc-700 bg-black/30" onerror="this.style.display='none';" /><p class="text-xs tracking-[2px] text-zinc-400">BLACKFORGE ENTERTAINMENT SOFTWARE</p></div>
+    <h1 class="text-3xl font-bold">Pago completado</h1>
+    <p class="text-zinc-300 mt-2">Verificando compra y generando tus enlaces de descarga...</p>
+    <div id="status" class="mt-5 text-sm text-zinc-400">Esperando respuesta de API.</div>
+    <div id="downloads" class="mt-4 space-y-2"></div>
+    <a href="./index.html" class="inline-block mt-6 px-4 py-2 bg-red-600 rounded-lg">Volver a la tienda</a>
+  </main>
+
+  <script>
+    const statusEl = document.getElementById("status");
+    const downloadsEl = document.getElementById("downloads");
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get("session_id");
+
+    async function load() {
+      if (!sessionId) {
+        statusEl.textContent = "No se encontro session_id en la URL.";
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/checkout/confirm?session_id=${encodeURIComponent(sessionId)}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "No se pudo confirmar la compra");
+
+        statusEl.textContent = "Compra confirmada. Descarga tus archivos:";
+        downloadsEl.innerHTML = "";
+
+        if (!data.downloads || data.downloads.length === 0) {
+          downloadsEl.innerHTML = '<p class="text-zinc-300">No hay descargas para esta compra.</p>';
+          return;
+        }
+
+        data.downloads.forEach((item) => {
+          const a = document.createElement("a");
+          a.href = item.url;
+          a.textContent = `Descargar ${item.name}`;
+          a.className = "block px-4 py-2 bg-red-700/70 rounded-lg hover:bg-red-600";
+          downloadsEl.appendChild(a);
+        });
+      } catch (error) {
+        statusEl.textContent = error.message;
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>
+
+
