@@ -12,14 +12,16 @@
   },
   home: {
     heroQuote: "No hacemos juegos para pasar el rato. Hacemos mundos para obsesionarte.",
-    announce: "Temporada 01 en marcha: contenido live cada 3 semanas."
+    announce: "Cronicas Neuron 2026: contenido live en nuestro canal de Youtube!."
   },
   studio: {
     manifesto: "BlackForge Entertainment Software combina identidad oscura, combate agresivo y narrativa con decisiones reales.",
     pillars: [
-      "Gameplay primero, cinematico despues.",
+      "El cliente y el disfrute es primero.",
       "Arte con silueta reconocible a 3 segundos.",
-      "Comunidad escuchada con parches frecuentes."
+      "Comunidad escuchada con parches frecuentes.",
+      "Expansiones unicamente que agregan demasiado contenido",
+      "Amor a los videojuegos"
     ]
   },
   universeCards: [
