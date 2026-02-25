@@ -14,7 +14,9 @@ const API = {
   membershipDelete: (id) => `/api/admin/marketplace/memberships/${encodeURIComponent(id)}`,
   coupons: "/api/admin/marketplace/coupons",
   couponUpdate: (code) => `/api/admin/marketplace/coupons/${encodeURIComponent(code)}`,
-  couponDelete: (code) => `/api/admin/marketplace/coupons/${encodeURIComponent(code)}`
+  couponDelete: (code) => `/api/admin/marketplace/coupons/${encodeURIComponent(code)}`,
+  memberAccounts: "/api/admin/membership/accounts",
+  memberLogs: "/api/admin/membership/logs"
 };
 
 const authPanel = document.getElementById("auth-panel");
@@ -40,6 +42,13 @@ const membershipsList = document.getElementById("memberships-admin-list");
 const couponForm = document.getElementById("coupon-form");
 const couponStatus = document.getElementById("coupon-admin-status");
 const couponsList = document.getElementById("coupons-admin-list");
+
+const memberPlanFilter = document.getElementById("member-log-plan");
+const memberLogRefresh = document.getElementById("member-log-refresh");
+const memberLogStatus = document.getElementById("member-log-status");
+const memberPlanTotals = document.getElementById("member-plan-totals");
+const memberAccounts = document.getElementById("member-accounts");
+const memberLogs = document.getElementById("member-logs");
 
 let editId = null;
 let editCouponCode = null;
@@ -228,6 +237,69 @@ function couponCard(coupon) {
   return article;
 }
 
+function membershipAccountCard(user) {
+  const plan = user.membership?.planId || "unknown";
+  const active = user.membership?.active ? "Activa" : "Inactiva";
+  const activatedAt = user.membership?.activatedAt || "";
+  return `
+    <article class="glass rounded-2xl p-4 border border-white/10">
+      <p class="font-mono text-xs text-zinc-400">${user.email}</p>
+      <p class="mt-2 text-sm text-zinc-200">Plan: <strong>${plan}</strong></p>
+      <p class="text-sm text-zinc-300">Estado: ${active}</p>
+      <p class="text-xs text-zinc-500 mt-1">Activa desde: ${activatedAt || "N/A"}</p>
+    </article>
+  `;
+}
+
+function renderMembershipTotals(totals) {
+  if (!memberPlanTotals) return;
+  const entries = Object.entries(totals || {});
+  if (!entries.length) {
+    memberPlanTotals.innerHTML = '<p class="text-zinc-500">Sin cuentas registradas.</p>';
+    return;
+  }
+  memberPlanTotals.innerHTML = entries
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([plan, count]) => `<p><strong>${plan}</strong>: ${count}</p>`)
+    .join("");
+}
+
+function renderMembershipLogs(logs) {
+  if (!memberLogs) return;
+  if (!Array.isArray(logs) || !logs.length) {
+    memberLogs.innerHTML = '<p class="text-zinc-500">Sin logs.</p>';
+    return;
+  }
+
+  memberLogs.innerHTML = logs.map((log) => {
+    const status = log.success ? "OK" : "ERROR";
+    const color = log.success ? "text-emerald-300" : "text-red-300";
+    return `<div class="border border-white/10 rounded-lg p-2 bg-black/20"><p class="${color}">${status} ${log.action}</p><p>${log.email} | ${log.planId}</p><p class="text-zinc-500">${log.at}${log.detail ? ` | ${log.detail}` : ""}</p></div>`;
+  }).join("");
+}
+
+async function loadMembershipAdminData() {
+  if (!memberAccounts || !memberLogs) return;
+
+  const planId = memberPlanFilter?.value || "";
+  const query = planId ? `?planId=${encodeURIComponent(planId)}` : "";
+
+  const [accountsData, logsData] = await Promise.all([
+    request(`${API.memberAccounts}${query}`),
+    request(`${API.memberLogs}${query}`)
+  ]);
+
+  renderMembershipTotals(accountsData.totals || {});
+  memberAccounts.innerHTML = (accountsData.users || []).map(membershipAccountCard).join("");
+  if (!accountsData.users || accountsData.users.length === 0) {
+    memberAccounts.innerHTML = '<p class="text-zinc-500">No hay cuentas para este plan.</p>';
+  }
+
+  renderMembershipLogs(logsData.logs || []);
+  if (memberLogStatus) {
+    memberLogStatus.textContent = `Cuentas: ${(accountsData.users || []).length} | Logs: ${(logsData.logs || []).length}`;
+  }
+}
 async function loadMarketplace() {
   const data = await request(API.list);
 
@@ -267,6 +339,7 @@ loginForm.addEventListener("submit", async (event) => {
     updateOwnerAccessUI();
     await loadMarketplace();
     await loadUsers();
+    await loadMembershipAdminData();
   } catch (error) {
     authStatus.textContent = error.message;
   }
@@ -423,6 +496,23 @@ refreshBtn.addEventListener("click", async () => {
   statusEl.textContent = "";
   membershipStatus.textContent = "";
   await loadMarketplace();
+  await loadMembershipAdminData();
+});
+
+memberLogRefresh?.addEventListener("click", async () => {
+  try {
+    await loadMembershipAdminData();
+  } catch (error) {
+    if (memberLogStatus) memberLogStatus.textContent = error.message;
+  }
+});
+
+memberPlanFilter?.addEventListener("change", async () => {
+  try {
+    await loadMembershipAdminData();
+  } catch (error) {
+    if (memberLogStatus) memberLogStatus.textContent = error.message;
+  }
 });
 
 gamesList.addEventListener("click", async (event) => {
@@ -467,6 +557,7 @@ gamesList.addEventListener("click", async (event) => {
     updateOwnerAccessUI();
     await loadMarketplace();
     await loadUsers();
+    await loadMembershipAdminData();
   } catch {
     setToken("");
     currentAdmin = "";
@@ -474,3 +565,12 @@ gamesList.addEventListener("click", async (event) => {
     updateOwnerAccessUI();
   }
 })();
+
+
+
+
+
+
+
+
+

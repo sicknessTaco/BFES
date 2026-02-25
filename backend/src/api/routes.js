@@ -22,7 +22,7 @@ import {
   updateMarketplaceGame,
   updateMembership
 } from "../services/marketplace.store.js";
-import { getMembershipUser, loginMembershipUser, registerMembershipUser } from "../services/member.store.js";
+import { getMembershipUser, listMembershipAccounts, listMembershipLogs, loginMembershipUser, registerMembershipUser } from "../services/member.store.js";
 
 export const apiRouter = Router();
 const ADMIN_TOKEN_TTL = "7d";
@@ -234,6 +234,27 @@ apiRouter.delete("/admin/marketplace/coupons/:code", requireAdmin, (req, res) =>
   }
 });
 
+
+apiRouter.get("/admin/membership/accounts", requireAdmin, (req, res) => {
+  try {
+    const planId = req.query.planId;
+    const data = listMembershipAccounts({ planId });
+    return res.json({ ok: true, ...data });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+apiRouter.get("/admin/membership/logs", requireAdmin, (req, res) => {
+  try {
+    const planId = req.query.planId;
+    const limit = req.query.limit;
+    const logs = listMembershipLogs({ planId, limit });
+    return res.json({ ok: true, logs });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
 apiRouter.post("/membership/register", async (req, res) => {
   try {
     const { sessionId, email, password } = req.body || {};
@@ -382,5 +403,6 @@ apiRouter.get("/download/:gameId", (req, res) => {
     return res.status(401).json({ error: error.message });
   }
 });
+
 
 

@@ -77,6 +77,37 @@
         <div id="memberships-admin-list" class="grid md:grid-cols-2 gap-3 mt-3"></div>
       </section>
 
+            <section class="glass rounded-3xl p-6">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <h2 class="font-display text-3xl">Cuentas de Membresia</h2>
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-zinc-300">Plan</label>
+            <select id="member-log-plan" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2">
+              <option value="">Todos</option>
+              <option value="bf-golden">BF Golden</option>
+              <option value="bf-nocturna">BF: Nocturna</option>
+            </select>
+            <button id="member-log-refresh" class="px-3 py-2 rounded-lg border border-white/20 hover:border-ember">Cargar</button>
+          </div>
+        </div>
+        <p id="member-log-status" class="mt-2 text-zinc-300"></p>
+
+        <div class="mt-4 grid md:grid-cols-2 gap-4">
+          <article class="glass rounded-2xl p-4 border border-white/10">
+            <h3 class="font-display text-xl">Resumen por plan</h3>
+            <div id="member-plan-totals" class="mt-3 text-sm text-zinc-300 space-y-1"></div>
+          </article>
+          <article class="glass rounded-2xl p-4 border border-white/10">
+            <h3 class="font-display text-xl">Logs recientes</h3>
+            <div id="member-logs" class="mt-3 text-xs text-zinc-300 max-h-56 overflow-auto space-y-2"></div>
+          </article>
+        </div>
+
+        <div class="mt-4">
+          <h3 class="font-display text-xl">Cuentas registradas</h3>
+          <div id="member-accounts" class="grid md:grid-cols-2 lg:grid-cols-3 gap-3 mt-3"></div>
+        </div>
+      </section>
       <section class="glass rounded-3xl p-6">
         <h2 class="font-display text-3xl">Cupones</h2>
         <form id="coupon-form" class="mt-4 grid md:grid-cols-3 gap-3">
@@ -124,3 +155,6 @@
   <script src="./marketplace.js"></script>
 </body>
 </html>
+
+
+
