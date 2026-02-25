@@ -37,8 +37,8 @@
     },
     {
       title: "Cronicas Neuron",
-      text: "Eventos live que cambian mapas y misiones segun decisiones de la comunidad.",
-      tag: "Live Ops"
+      text: "Eventos live que anuncian juegos y nuevas expansiones para nuestros juegos.",
+      tag: "Live Event"
     }
   ],
   upcomingGames: [
