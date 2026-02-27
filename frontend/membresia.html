@@ -33,7 +33,7 @@
   <header class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
     <nav class="glass rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
       <div class="flex items-center gap-3"><img src="./imagenes/logo.png" alt="BlackForge logo" class="w-10 h-10 rounded-lg object-cover border border-white/20 bg-black/30" onerror="this.style.display='none';this.nextElementSibling.style.marginLeft='0';" /><p class="font-display text-lg tracking-[2px]">BLACKFORGE ENTERTAINMENT SOFTWARE</p></div>
-      <div class="flex flex-wrap gap-3 text-sm sm:text-base"><a href="./index.html" class="hover:text-ember">Inicio</a><a href="./juegos.html" class="hover:text-ember">Juegos</a><a href="./membresia.html" class="text-ember">Membresia</a><a href="./descargas.html" class="hover:text-ember">Descargas</a><a href="./faq.html" class="hover:text-ember">FAQ</a></div>
+      <div class="flex flex-wrap gap-3 text-sm sm:text-base"><a href="./index.html" class="hover:text-ember">Inicio</a><a href="./juegos.html" class="hover:text-ember">Juegos</a><a href="./membresia.html" class="text-ember">Membresia</a><a href="./descargas.html" class="hover:text-ember">Demos</a><a href="./faq.html" class="hover:text-ember">FAQ</a></div>
     </nav>
   </header>
   <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-20 space-y-6">
@@ -46,19 +46,21 @@
 
     <section class="glass rounded-3xl p-6">
       <h2 class="font-display text-3xl">Acceso de membresia</h2>
-      <p class="text-zinc-300 mt-2">Inicia sesion para ver descargas exclusivas de membresia.</p>
+      <p class="text-zinc-300 mt-2">Inicia sesion para entrar a tu portal de miembro con descargas segun tu rango.</p>
       <form id="member-login-form" class="mt-4 grid md:grid-cols-2 gap-3">
         <input id="member-email" type="email" placeholder="Email" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" required>
         <input id="member-password" type="password" placeholder="Contrasena" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" required>
         <button class="md:col-span-2 px-4 py-2 rounded-lg border border-white/20 hover:border-ember">Iniciar sesion</button>
       </form>
       <p id="member-status" class="mt-3 text-zinc-300"></p>
-      <button id="member-load-downloads" class="mt-2 px-4 py-2 rounded-lg bg-red-700 hover:bg-red-600 hidden">Ver descargas de membresia</button>
-      <div id="member-downloads" class="grid md:grid-cols-2 gap-2 mt-3"></div>
+      <button id="member-open-portal" class="mt-2 px-4 py-2 rounded-lg bg-red-700 hover:bg-red-600 hidden">Abrir portal de miembro</button>
     </section>
   </main>
   <script src="./app.js"></script>
   <script src="./membership.js"></script>
 </body>
 </html>
+
+
+
 

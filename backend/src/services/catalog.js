@@ -34,6 +34,7 @@
       stripePriceId: "price_pass_bf_golden",
       tier: "Base",
       highlight: "Equivalente a EA Play",
+      downloadAccessGameIds: ["iron-horizon", "neon-rush-2088"],
       perks: [
         "Acceso al catalogo base",
         "Pruebas anticipadas de nuevos builds",
@@ -48,6 +49,7 @@
       stripePriceId: "price_pass_bf_nocturna",
       tier: "Pro",
       highlight: "Version pro estilo EA Play Pro",
+      downloadAccessGameIds: ["all"],
       perks: [
         "Todo lo de BF Golden",
         "Lanzamientos dia 1",

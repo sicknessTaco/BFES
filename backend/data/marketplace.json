@@ -37,6 +37,10 @@
       "stripePriceId": "price_pass_bf_golden",
       "tier": "Base",
       "highlight": "Experimenta La Forga a su maximo esplendor",
+      "downloadAccessGameIds": [
+        "aki-world",
+        "pk-abd"
+      ],
       "perks": [
         "Acceso al catalogo base",
         "Pruebas anticipadas de nuevos builds",
@@ -51,6 +55,9 @@
       "stripePriceId": "price_pass_bf_nocturna",
       "tier": "Pro",
       "highlight": "La Forja Nocturna abre sus puertas a los miembros mas exclusivos",
+      "downloadAccessGameIds": [
+        "all"
+      ],
       "perks": [
         "Todo lo de BF Golden",
         "Lanzamientos dia 1",
@@ -66,6 +73,9 @@
       "stripePriceId": "price_pass_bf_golden_year",
       "tier": "Base",
       "highlight": "La experiencia Golden para los que prefieren un pago Anual",
+      "downloadAccessGameIds": [
+        "all"
+      ],
       "perks": [
         "todo lo de BF: Golden pero por año"
       ]

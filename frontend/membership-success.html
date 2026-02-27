@@ -18,14 +18,24 @@
     </form>
 
     <p id="reg-status" class="mt-4 text-zinc-300"></p>
-    <a href="./membresia.html" class="inline-block mt-6 px-4 py-2 bg-red-700 rounded-lg">Ir a membresia</a>
+    <a href="./miembros.html" class="inline-block mt-6 px-4 py-2 bg-red-700 rounded-lg">Ir al portal de miembro</a>
   </main>
 
   <script>
     const MEMBER_TOKEN_KEY = "bf_member_token";
+    const DEVICE_KEY = "bf_device_id";
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get("session_id");
     const form = document.getElementById("register-form");
+
+    function clientDeviceId() {
+      let id = localStorage.getItem(DEVICE_KEY);
+      if (!id) {
+        id = (crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`).replace(/\s+/g, "");
+        localStorage.setItem(DEVICE_KEY, id);
+      }
+      return id;
+    }
     const statusEl = document.getElementById("reg-status");
 
     form.addEventListener("submit", async (event) => {
@@ -38,7 +48,7 @@
 
         const res = await fetch("/api/membership/register", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-client-device-id": clientDeviceId() },
           body: JSON.stringify({ sessionId, email, password })
         });
 
@@ -54,5 +64,7 @@
   </script>
 </body>
 </html>
+
+
 
 

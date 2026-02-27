@@ -1,8 +1,67 @@
 <!doctype html>
-<html lang="es"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>BlackForge | Descargas</title><script src="https://cdn.tailwindcss.com"></script>
-  <script>window.tailwind = window.tailwind || {};</script><script>tailwind.config={theme:{extend:{fontFamily:{display:["Orbitron","sans-serif"],body:["Rajdhani","sans-serif"]},colors:{coal:"#070707",crimson:"#D80B17",ember:"#FF4D4D",wine:"#52060A"}}}};</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet"><style>.glass{background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.03));backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12)}</style></head>
-<body class="bg-coal text-white font-body min-h-screen"><div class="fixed inset-0 -z-10 overflow-hidden"><div class="absolute -top-24 -left-20 w-[32rem] h-[32rem] bg-crimson/20 blur-3xl rounded-full"></div><div class="absolute top-1/2 right-0 w-[28rem] h-[28rem] bg-wine/60 blur-3xl rounded-full"></div></div><header class="max-w-7xl mx-auto px-4 sm:px-6 py-6"><nav class="glass rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between"><div class="flex items-center gap-3"><img src="./imagenes/logo.png" alt="BlackForge logo" class="w-10 h-10 rounded-lg object-cover border border-white/20 bg-black/30" onerror="this.style.display='none';this.nextElementSibling.style.marginLeft='0';" /><p class="font-display text-lg tracking-[2px]">BLACKFORGE ENTERTAINMENT SOFTWARE</p></div><div class="flex flex-wrap gap-3 text-sm sm:text-base"><a href="./index.html" class="hover:text-ember">Inicio</a><a href="./juegos.html" class="hover:text-ember">Juegos</a><a href="./membresia.html" class="hover:text-ember">Membresia</a><a href="./descargas.html" class="text-ember">Descargas</a><a href="./faq.html" class="hover:text-ember">FAQ</a></div></nav></header>
-<main class="max-w-7xl mx-auto px-4 sm:px-6 pb-20"><section class="glass rounded-2xl p-6"><h1 class="font-display text-4xl">Descargas</h1><p class="text-zinc-300 mt-3">Cuando completes un pago, Stripe redirige a la pagina de exito y se generan links firmados.</p><a href="./success.html" class="inline-block mt-5 px-4 py-2 rounded-lg bg-crimson hover:bg-red-600">Ir a pagina de exito</a></section></main></body></html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>BlackForge | Demos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>window.tailwind = window.tailwind || {};</script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { display: ["Orbitron", "sans-serif"], body: ["Rajdhani", "sans-serif"] },
+          colors: { coal: "#070707", crimson: "#D80B17", ember: "#FF4D4D", wine: "#52060A" }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    .glass{background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.03));backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12)}
+    .image-slot{aspect-ratio:16/9;border:1px dashed rgba(255,255,255,.35);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#b3b3b3;background:rgba(0,0,0,.25)}
+  </style>
+</head>
+<body class="bg-coal text-white font-body min-h-screen">
+  <div class="fixed inset-0 -z-10 overflow-hidden"><div class="absolute -top-24 -left-20 w-[32rem] h-[32rem] bg-crimson/20 blur-3xl rounded-full"></div><div class="absolute top-1/2 right-0 w-[28rem] h-[28rem] bg-wine/60 blur-3xl rounded-full"></div></div>
 
+  <header class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+    <nav class="glass rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+      <div class="flex items-center gap-3"><img src="./imagenes/logo.png" alt="BlackForge logo" class="w-10 h-10 rounded-lg object-cover border border-white/20 bg-black/30" onerror="this.style.display='none';this.nextElementSibling.style.marginLeft='0';" /><p class="font-display text-lg tracking-[2px]">BLACKFORGE ENTERTAINMENT SOFTWARE</p></div>
+      <div class="flex flex-wrap gap-3 text-sm sm:text-base"><a href="./index.html" class="hover:text-ember">Inicio</a><a href="./juegos.html" class="hover:text-ember">Juegos</a><a href="./membresia.html" class="hover:text-ember">Membresia</a><a href="./descargas.html" class="text-ember">Demos</a><a href="./faq.html" class="hover:text-ember">FAQ</a></div>
+    </nav>
+  </header>
 
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
+    <section class="glass rounded-3xl p-6">
+      <h1 class="font-display text-4xl">Demos</h1>
+      <p class="text-zinc-300 mt-2">Todas las demos llevan exclusivamente a la pagina de descarga.</p>
+      <div id="demo-download-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5"></div>
+    </section>
+  </main>
 
+  <script src="./editable-content.js"></script>
+  <script>
+    const grid = document.getElementById("demo-download-grid");
+    const demos = (window.BFEditable && window.BFEditable.demos) ? window.BFEditable.demos : [];
+
+    grid.innerHTML = demos.map((demo) => `
+      <article class="glass rounded-2xl p-4 border border-white/15">
+        <div class="image-slot overflow-hidden">
+          <img src="${demo.image || ""}" alt="${demo.title || "Demo"}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='Imagen pendiente';" />
+        </div>
+        <h2 class="font-display text-xl mt-3">${demo.title || "Demo"}</h2>
+        <p class="text-zinc-300 text-sm mt-2">${demo.summary || ""}</p>
+        <p class="text-zinc-500 text-xs mt-2">Build ${demo.version || "N/A"}</p>
+        <a href="./success.html" class="mt-3 inline-block px-4 py-2 rounded-lg bg-red-700 hover:bg-red-600">Ir a pagina de descarga</a>
+      </article>
+    `).join("");
+
+    if (!demos.length) {
+      grid.innerHTML = '<p class="text-zinc-400">No hay demos configuradas.</p>';
+    }
+  </script>
+</body>
+</html>

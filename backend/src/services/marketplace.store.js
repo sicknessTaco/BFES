@@ -17,6 +17,7 @@ function defaultCoupons() {
       value: 10,
       description: "10% de descuento en juegos del marketplace",
       active: true,
+      visible: true,
       expires: "2026-12-31"
     },
     {
@@ -25,6 +26,7 @@ function defaultCoupons() {
       value: 5,
       description: "$5 USD de descuento en compra total",
       active: true,
+      visible: true,
       expires: "2026-08-31"
     }
   ];
@@ -116,6 +118,29 @@ function normalizePerks(perks) {
     .filter(Boolean);
 }
 
+function normalizeDownloadAccess(access) {
+  if (Array.isArray(access)) {
+    const normalized = access
+      .map((item) => String(item || "").trim())
+      .filter(Boolean);
+    if (!normalized.length) return ["all"];
+    if (normalized.some((item) => item.toLowerCase() === "all" || item === "*")) return ["all"];
+    return [...new Set(normalized)];
+  }
+
+  const raw = String(access || "").trim();
+  if (!raw || raw.toLowerCase() === "all" || raw === "*") return ["all"];
+
+  const parsed = raw
+    .split(/\r?\n|,|\|/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  if (!parsed.length) return ["all"];
+  if (parsed.some((item) => item.toLowerCase() === "all" || item === "*")) return ["all"];
+  return [...new Set(parsed)];
+}
+
 function normalizeMembership(input) {
   const id = String(input.id || "").trim();
   const name = String(input.name || "").trim();
@@ -125,6 +150,7 @@ function normalizeMembership(input) {
   const tier = String(input.tier || "").trim() || "Base";
   const highlight = String(input.highlight || "").trim() || "Membresia editable";
   const perks = normalizePerks(input.perks);
+  const downloadAccessGameIds = normalizeDownloadAccess(input.downloadAccessGameIds ?? input.downloadAccess);
 
   if (!id) throw new Error("membership id is required");
   if (!name) throw new Error("membership name is required");
@@ -138,7 +164,8 @@ function normalizeMembership(input) {
     stripePriceId: stripePriceId || `price_pass_${id}`,
     tier,
     highlight,
-    perks
+    perks,
+    downloadAccessGameIds
   };
 }
 
@@ -149,6 +176,7 @@ function normalizeCoupon(input) {
   const description = String(input.description || "").trim();
   const expires = String(input.expires || "").trim();
   const active = input.active !== false;
+  const visible = input.visible !== false;
 
   if (!code) throw new Error("coupon code is required");
   if (type !== "percent" && type !== "fixed") throw new Error("coupon type must be percent or fixed");
@@ -160,6 +188,7 @@ function normalizeCoupon(input) {
     value,
     description: description || "Cupon editable",
     active,
+    visible,
     expires: expires || ""
   };
 }

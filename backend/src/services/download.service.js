@@ -37,7 +37,16 @@ export function getDownloadableFiles(checkoutData) {
   const catalog = getMarketplaceCatalog();
 
   if (checkoutData.type === "membership") {
-    return catalog.games.map((game) => fileMap.get(game.id)).filter(Boolean);
+    const requestedIds = Array.isArray(checkoutData.itemIds) && checkoutData.itemIds.length
+      ? checkoutData.itemIds.map((id) => String(id || "").trim()).filter(Boolean)
+      : null;
+
+    const sourceIds = requestedIds || (catalog.games || []).map((game) => game.id);
+    const resolved = sourceIds.map((id) => fileMap.get(id)).filter(Boolean);
+
+    if (requestedIds) return resolved;
+    if (resolved.length) return resolved;
+    return Array.from(fileMap.values());
   }
 
   return (checkoutData.itemIds || []).map((id) => fileMap.get(id)).filter(Boolean);

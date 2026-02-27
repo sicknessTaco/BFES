@@ -1,9 +1,18 @@
-﻿const MEMBER_TOKEN_KEY = "bf_member_token";
+const MEMBER_TOKEN_KEY = "bf_member_token";
+const DEVICE_KEY = "bf_device_id";
 
 const loginForm = document.getElementById("member-login-form");
 const statusEl = document.getElementById("member-status");
-const downloadsBtn = document.getElementById("member-load-downloads");
-const downloadsEl = document.getElementById("member-downloads");
+const portalBtn = document.getElementById("member-open-portal");
+
+function clientDeviceId() {
+  let id = localStorage.getItem(DEVICE_KEY);
+  if (!id) {
+    id = (crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`).replace(/\s+/g, "");
+    localStorage.setItem(DEVICE_KEY, id);
+  }
+  return id;
+}
 
 function memberToken() {
   return localStorage.getItem(MEMBER_TOKEN_KEY) || "";
@@ -13,6 +22,7 @@ async function authRequest(url, options = {}) {
   const res = await fetch(url, {
     headers: {
       "Content-Type": "application/json",
+      "x-client-device-id": clientDeviceId(),
       Authorization: `Bearer ${memberToken()}`
     },
     ...options
@@ -28,7 +38,7 @@ async function loadMemberSession() {
   try {
     const data = await authRequest("/api/membership/me");
     statusEl.textContent = `Membresia activa: ${data.user.membership.planId}`;
-    downloadsBtn.classList.remove("hidden");
+    portalBtn?.classList.remove("hidden");
   } catch {
     localStorage.removeItem(MEMBER_TOKEN_KEY);
   }
@@ -42,7 +52,10 @@ loginForm?.addEventListener("submit", async (event) => {
     const password = document.getElementById("member-password").value;
     const res = await fetch("/api/membership/login", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-client-device-id": clientDeviceId()
+      },
       body: JSON.stringify({ email, password })
     });
 
@@ -51,19 +64,14 @@ loginForm?.addEventListener("submit", async (event) => {
 
     localStorage.setItem(MEMBER_TOKEN_KEY, data.token);
     statusEl.textContent = `Membresia activa: ${data.user.membership.planId}`;
-    downloadsBtn.classList.remove("hidden");
+    portalBtn?.classList.remove("hidden");
   } catch (error) {
     statusEl.textContent = error.message;
   }
 });
 
-downloadsBtn?.addEventListener("click", async () => {
-  try {
-    const data = await authRequest("/api/membership/downloads");
-    downloadsEl.innerHTML = (data.downloads || []).map((item) => `<a href="${item.url}" class="block px-4 py-2 rounded-lg bg-red-700/70 hover:bg-red-600">Descargar ${item.name}</a>`).join("");
-  } catch (error) {
-    statusEl.textContent = error.message;
-  }
+portalBtn?.addEventListener("click", () => {
+  window.location.href = "./miembros.html";
 });
 
 loadMemberSession();

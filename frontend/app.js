@@ -35,6 +35,7 @@ const cartTitle = document.getElementById("cart-title");
 const cartTotalLabel = document.getElementById("cart-total-label");
 const couponsGrid = document.getElementById("coupons-grid");
 const upcomingGrid = document.getElementById("upcoming-grid");
+const demosGrid = document.getElementById("demos-grid");
 const couponCodeInput = document.getElementById("coupon-code");
 const couponStatus = document.getElementById("coupon-status");
 
@@ -121,7 +122,22 @@ function renderEditableContent() {
         </div>
         <h3 class="font-display text-xl mt-3">${item.title}</h3>
         <p class="text-zinc-400 text-sm mt-1">Salida estimada: ${item.eta}</p>
-        <p class="text-zinc-300 text-sm mt-2">${item.note || "Espacio editable"}</p>
+        <p class="text-zinc-300 text-sm mt-2">${item.note || "Proximamente"}</p>
+      </article>
+    `).join("");
+  }
+
+  if (demosGrid) {
+    const demos = EDITABLE.demos || [];
+    demosGrid.innerHTML = demos.map((demo) => `
+      <article class="glass rounded-2xl p-4 border border-white/15">
+        <div class="image-slot overflow-hidden">
+          <img src="${demo.image}" alt="${demo.title}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='Imagen pendiente';" />
+        </div>
+        <h3 class="font-display text-xl mt-3">${demo.title}</h3>
+        <p class="text-zinc-300 text-sm mt-2">${demo.summary || ""}</p>
+        <p class="text-zinc-500 text-xs mt-2">Build ${demo.version || "N/A"}</p>
+        <a href="./descargas.html" class="mt-3 inline-block px-4 py-2 rounded-lg bg-red-700 hover:bg-red-600">Ir a pagina de descarga</a>
       </article>
     `).join("");
   }
@@ -130,7 +146,7 @@ function renderEditableContent() {
 function renderCoupons() {
   if (!couponsGrid) return;
 
-  couponsGrid.innerHTML = state.coupons.map((coupon) => {
+  couponsGrid.innerHTML = state.coupons.filter((coupon) => coupon.visible !== false).map((coupon) => {
     const active = coupon.active !== false;
     const badge = active ? "Activo" : "Inactivo";
     const style = active ? "border-emerald-400/40" : "border-zinc-500/30 opacity-70";
@@ -139,7 +155,7 @@ function renderCoupons() {
     return `
       <article class="glass rounded-2xl p-4 border ${style}">
         <p class="font-display text-xl">${coupon.code}</p>
-        <p class="text-zinc-300 text-sm mt-1">${coupon.description || "Cupon editable"}</p>
+        <p class="text-zinc-300 text-sm mt-1">${coupon.description || "Promocion"}</p>
         <p class="text-zinc-400 text-xs mt-2">Descuento: ${value} | Vence: ${coupon.expires || "N/A"}</p>
         <span class="inline-block mt-2 text-xs px-2 py-1 rounded-full border border-white/20">${badge}</span>
       </article>
@@ -389,4 +405,5 @@ document.addEventListener("click", async (event) => {
 });
 
 init();
+
 

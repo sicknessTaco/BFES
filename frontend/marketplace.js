@@ -1,4 +1,5 @@
 const TOKEN_KEY = "bf_admin_token";
+const DEVICE_KEY = "bf_device_id";
 
 const API = {
   login: "/api/admin/auth/login",
@@ -55,6 +56,15 @@ let editCouponCode = null;
 let editMembershipId = null;
 let currentAdmin = "";
 
+function clientDeviceId() {
+  let id = localStorage.getItem(DEVICE_KEY);
+  if (!id) {
+    id = (crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`).replace(/\s+/g, "");
+    localStorage.setItem(DEVICE_KEY, id);
+  }
+  return id;
+}
+
 function token() {
   return localStorage.getItem(TOKEN_KEY) || "";
 }
@@ -70,6 +80,7 @@ function setToken(value) {
 function authHeaders() {
   return {
     "Content-Type": "application/json",
+    "x-client-device-id": clientDeviceId(),
     Authorization: `Bearer ${token()}`
   };
 }
@@ -101,6 +112,11 @@ function readForm() {
 }
 
 function readMembershipForm() {
+  const access = document.getElementById("membership-download-access").value
+    .split(/\r?\n|,|\|/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
   return {
     id: document.getElementById("membership-id").value.trim(),
     name: document.getElementById("membership-name").value.trim(),
@@ -112,7 +128,8 @@ function readMembershipForm() {
     perks: document.getElementById("membership-perks").value
       .split(/\r?\n/)
       .map((item) => item.trim())
-      .filter(Boolean)
+      .filter(Boolean),
+    downloadAccessGameIds: access.length ? access : ["all"]
   };
 }
 
@@ -123,7 +140,8 @@ function readCouponForm() {
     value: Number(document.getElementById("coupon-value-admin").value),
     expires: document.getElementById("coupon-expires-admin").value.trim(),
     description: document.getElementById("coupon-description-admin").value.trim(),
-    active: document.getElementById("coupon-active-admin").checked
+    active: document.getElementById("coupon-active-admin").checked,
+    visible: document.getElementById("coupon-visible-admin").checked
   };
 }
 
@@ -146,6 +164,9 @@ function fillMembershipForm(plan) {
   document.getElementById("membership-highlight").value = plan.highlight || "";
   document.getElementById("membership-stripe-price-id").value = plan.stripePriceId || "";
   document.getElementById("membership-perks").value = Array.isArray(plan.perks) ? plan.perks.join("\n") : "";
+  document.getElementById("membership-download-access").value = Array.isArray(plan.downloadAccessGameIds)
+    ? plan.downloadAccessGameIds.join("\n")
+    : "all";
 }
 
 function fillCouponForm(coupon) {
@@ -155,6 +176,7 @@ function fillCouponForm(coupon) {
   document.getElementById("coupon-expires-admin").value = coupon.expires || "";
   document.getElementById("coupon-description-admin").value = coupon.description || "";
   document.getElementById("coupon-active-admin").checked = coupon.active !== false;
+  document.getElementById("coupon-visible-admin").checked = coupon.visible !== false;
 }
 
 function resetForm() {
@@ -166,12 +188,14 @@ function resetMembershipForm() {
   editMembershipId = null;
   membershipForm.reset();
   document.getElementById("membership-interval").value = "mes";
+  document.getElementById("membership-download-access").value = "all";
 }
 
 function resetCouponForm() {
   editCouponCode = null;
   couponForm.reset();
   document.getElementById("coupon-active-admin").checked = true;
+  document.getElementById("coupon-visible-admin").checked = true;
 }
 
 function setAdminMode(enabled) {
@@ -180,7 +204,7 @@ function setAdminMode(enabled) {
 }
 
 async function request(url, options = {}, useAuth = true) {
-  const headers = useAuth ? authHeaders() : { "Content-Type": "application/json" };
+  const headers = useAuth ? authHeaders() : { "Content-Type": "application/json", "x-client-device-id": clientDeviceId() };
   const res = await fetch(url, { headers, ...options });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || "Request failed");
@@ -205,6 +229,9 @@ function gameCard(game) {
 }
 
 function membershipCard(plan) {
+  const access = Array.isArray(plan.downloadAccessGameIds) && plan.downloadAccessGameIds.length
+    ? plan.downloadAccessGameIds.join(", ")
+    : "all";
   const article = document.createElement("article");
   article.className = "glass rounded-2xl p-4 border border-white/10";
   article.innerHTML = `
@@ -212,6 +239,7 @@ function membershipCard(plan) {
     <h3 class="font-display text-xl">${plan.name}</h3>
     <p class="text-sm text-zinc-300 mt-1">${plan.interval} | ${plan.tier || "Base"}</p>
     <p class="text-sm text-zinc-300 mt-1">${plan.highlight || ""}</p>
+    <p class="text-xs text-zinc-400 mt-1">Descargas: ${access}</p>
     <p class="text-sm text-zinc-400 mt-2">${Number(plan.price).toFixed(2)} USD</p>
     <div class="mt-3 flex gap-2">
       <button data-membership-edit="${plan.id}" class="px-3 py-2 rounded-lg border border-white/20">Editar</button>
@@ -228,7 +256,7 @@ function couponCard(coupon) {
   article.innerHTML = `
     <p class="font-display text-xl">${coupon.code}</p>
     <p class="text-sm text-zinc-300 mt-1">${coupon.description || ""}</p>
-    <p class="text-xs text-zinc-400 mt-2">${valueLabel} | ${coupon.active ? "Activo" : "Inactivo"} | ${coupon.expires || "sin fecha"}</p>
+    <p class="text-xs text-zinc-400 mt-2">${valueLabel} | ${coupon.active ? "Activo" : "Inactivo"} | ${coupon.visible !== false ? "Visible" : "Oculto"} | ${coupon.expires || "sin fecha"}</p>
     <div class="mt-3 flex gap-2">
       <button data-coupon-edit="${coupon.code}" class="px-3 py-2 rounded-lg border border-white/20">Editar</button>
       <button data-coupon-delete="${coupon.code}" class="px-3 py-2 rounded-lg border border-red-500/50 text-red-300">Eliminar</button>
@@ -278,6 +306,22 @@ function renderMembershipLogs(logs) {
   }).join("");
 }
 
+function renderMemberPlanFilter(memberships) {
+  if (!memberPlanFilter) return;
+
+  const current = memberPlanFilter.value || "";
+  const options = [`<option value="">Todos</option>`]
+    .concat(
+      (memberships || []).map((plan) => {
+        const label = plan.name ? `${plan.name} (${plan.id})` : plan.id;
+        return `<option value="${plan.id}">${label}</option>`;
+      })
+    )
+    .join("");
+
+  memberPlanFilter.innerHTML = options;
+  memberPlanFilter.value = current && (memberships || []).some((plan) => plan.id === current) ? current : "";
+}
 async function loadMembershipAdminData() {
   if (!memberAccounts || !memberLogs) return;
 
@@ -308,6 +352,7 @@ async function loadMarketplace() {
 
   membershipsList.innerHTML = "";
   (data.memberships || []).forEach((plan) => membershipsList.appendChild(membershipCard(plan)));
+  renderMemberPlanFilter(data.memberships || []);
 
   couponsList.innerHTML = "";
   (data.coupons || []).forEach((coupon) => couponsList.appendChild(couponCard(coupon)));
@@ -565,6 +610,16 @@ gamesList.addEventListener("click", async (event) => {
     updateOwnerAccessUI();
   }
 })();
+
+
+
+
+
+
+
+
+
+
 
 
 

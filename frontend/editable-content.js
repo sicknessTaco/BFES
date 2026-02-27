@@ -61,6 +61,29 @@
       note: "Juego comedico en desarrollo"
     }
   ],
+  demos: [
+    {
+      id: "aki-demo",
+      title: "Aki vs. El Mundo - Demo",
+      summary: "Primer acto jugable con combate y decisiones base.",
+      version: "v0.9.3",
+      image: "./imagenes/demo-aki.jpg"
+    },
+    {
+      id: "kogen-demo",
+      title: "La Caida de Ko-gen - Demo",
+      summary: "Ruta alterna, dialogos ramificados y sistema de clima.",
+      version: "v0.6.1",
+      image: "./imagenes/demo-kogen.jpg"
+    },
+    {
+      id: "abandonment-demo",
+      title: "Projekt Abandonment - Demo",
+      summary: "Introduccion de terror psicologico y archivos interactivos.",
+      version: "v0.4.7",
+      image: "./imagenes/demo-abandonment.jpg"
+    }
+  ],
   roadmap: [
     { phase: "Q2", item: "Aki vs. El Mundo Build 1 (BF Golden)"},
     { phase: "Q3", item: "Build 1 de Project: Abandonment (BF Golden)" },

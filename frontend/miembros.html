@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>BlackForge | Portal de Miembro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>window.tailwind = window.tailwind || {};</script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { display: ["Orbitron", "sans-serif"], body: ["Rajdhani", "sans-serif"] },
+          colors: { coal: "#070707", crimson: "#D80B17", ember: "#FF4D4D", wine: "#52060A" }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    .glass{background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.03));backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12)}
+  </style>
+</head>
+<body class="bg-coal text-white font-body min-h-screen">
+  <div class="fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute -top-24 -left-20 w-[32rem] h-[32rem] bg-crimson/20 blur-3xl rounded-full"></div>
+    <div class="absolute top-1/2 right-0 w-[28rem] h-[28rem] bg-wine/60 blur-3xl rounded-full"></div>
+  </div>
+
+  <header class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+    <nav class="glass rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+      <div class="flex items-center gap-3"><img src="./imagenes/logo.png" alt="BlackForge logo" class="w-10 h-10 rounded-lg object-cover border border-white/20 bg-black/30" onerror="this.style.display='none';this.nextElementSibling.style.marginLeft='0';" /><p class="font-display text-lg tracking-[2px]">PORTAL DE MIEMBRO</p></div>
+      <div class="flex flex-wrap gap-3 text-sm sm:text-base"><a href="./membresia.html" class="hover:text-ember">Membresia</a><button id="member-logout" class="px-3 py-1 rounded-lg border border-red-500/50 text-red-300">Cerrar sesion</button></div>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-20 space-y-6">
+    <section class="glass rounded-3xl p-6">
+      <h1 class="font-display text-4xl">Zona de miembros</h1>
+      <p id="member-meta" class="text-zinc-300 mt-2">Cargando datos...</p>
+      <p id="member-status" class="text-zinc-400 mt-1 text-sm"></p>
+    </section>
+
+    <section class="glass rounded-3xl p-6">
+      <h2 class="font-display text-3xl">Descargas habilitadas</h2>
+      <p class="text-zinc-300 mt-2">El contenido visible depende del rango de membresia configurado en admin.</p>
+      <div id="member-downloads" class="grid md:grid-cols-2 lg:grid-cols-3 gap-3 mt-4"></div>
+    </section>
+  </main>
+
+  <script src="./miembros.js"></script>
+</body>
+</html>

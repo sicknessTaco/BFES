@@ -1,13 +1,26 @@
-﻿const phraseInput = document.getElementById("admin-phrase");
-const phraseBtn = document.getElementById("admin-phrase-btn");
 const phraseStatus = document.getElementById("admin-phrase-status");
-const loginBox = document.getElementById("admin-login");
 const loginBtn = document.getElementById("admin-login-btn");
+const vignette = document.getElementById("admin-vignette");
+const panel = document.getElementById("admin-login-panel");
+const closeBtn = document.getElementById("admin-panel-close");
+const DEVICE_KEY = "bf_device_id";
+
+function clientDeviceId() {
+  let id = localStorage.getItem(DEVICE_KEY);
+  if (!id) {
+    id = (crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`).replace(/\s+/g, "");
+    localStorage.setItem(DEVICE_KEY, id);
+  }
+  return id;
+}
 
 async function loginAdmin(username, password) {
   const res = await fetch("/api/admin/auth/login", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "x-client-device-id": clientDeviceId()
+    },
     body: JSON.stringify({ username, password })
   });
   const data = await res.json().catch(() => ({}));
@@ -15,16 +28,13 @@ async function loginAdmin(username, password) {
   localStorage.setItem("bf_admin_token", data.token);
 }
 
-phraseBtn?.addEventListener("click", () => {
-  const value = String(phraseInput?.value || "").trim().toLowerCase();
-  if (value !== "forgeplay") {
-    phraseStatus.textContent = "Combinacion invalida.";
-    loginBox?.classList.add("hidden");
-    return;
-  }
+vignette?.addEventListener("click", () => {
+  panel?.classList.remove("hidden");
+  phraseStatus.textContent = "";
+});
 
-  phraseStatus.textContent = "Combinacion valida. Ingresa credenciales.";
-  loginBox?.classList.remove("hidden");
+closeBtn?.addEventListener("click", () => {
+  panel?.classList.add("hidden");
 });
 
 loginBtn?.addEventListener("click", async () => {
@@ -32,6 +42,7 @@ loginBtn?.addEventListener("click", async () => {
     const username = document.getElementById("admin-user")?.value?.trim();
     const password = document.getElementById("admin-pass")?.value || "";
     await loginAdmin(username, password);
+    panel?.classList.add("hidden");
     window.location.href = "./admin.html";
   } catch (error) {
     phraseStatus.textContent = error.message;

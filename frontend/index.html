@@ -73,7 +73,7 @@
       <div class="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h2 class="font-display text-3xl">Universo BlackForge</h2>
-          <p class="text-zinc-300">Bloque editable para que metas lore y novedades cuando quieras.</p>
+          <p class="text-zinc-300">Lore, novedades y universo del estudio.</p>
         </div>
         <a href="./juegos.html#editor-zone" class="px-4 py-2 rounded-full border border-red-400/50 hover:border-red-300">Editar contenido</a>
       </div>
@@ -83,23 +83,31 @@
 
   <footer class="max-w-7xl mx-auto px-4 sm:px-6 pb-8">
     <section class="glass rounded-2xl p-4">
-      <p class="text-zinc-400 text-sm">Acceso interno</p>
-      <div class="mt-2 flex flex-col sm:flex-row gap-2">
-        <input id="admin-phrase" class="flex-1 bg-black/30 border border-white/20 rounded-lg px-3 py-2" placeholder="Combinacion" />
-        <button id="admin-phrase-btn" class="px-4 py-2 rounded-lg border border-white/20 hover:border-ember">Validar</button>
+      <p class="text-zinc-400 text-sm">BlackForge Entertainment Software</p>
+    </section>
+  </footer>
+
+  <button id="admin-vignette" aria-label="Acceso interno" class="fixed bottom-2 right-2 w-6 h-6 rounded-full border border-white/10 bg-black/20 text-[10px] text-white/35 hover:text-white/80 hover:border-white/40 transition">•</button>
+
+  <section id="admin-login-panel" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm p-4">
+    <div class="max-w-md mx-auto mt-[10vh] glass rounded-2xl p-5">
+      <div class="flex items-center justify-between">
+        <h3 class="font-display text-xl">Acceso admin</h3>
+        <button id="admin-panel-close" class="px-2 py-1 rounded border border-white/20">x</button>
       </div>
-      <p id="admin-phrase-status" class="text-zinc-400 text-sm mt-2"></p>
-      <div id="admin-login" class="hidden mt-3 grid sm:grid-cols-3 gap-2">
+      <div class="mt-3 grid gap-2">
         <input id="admin-user" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" placeholder="Usuario" />
         <input id="admin-pass" type="password" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" placeholder="Contrasena" />
         <button id="admin-login-btn" class="rounded-lg bg-gradient-to-r from-red-700 to-red-500 hover:brightness-110 px-4 py-2">Ir a admin</button>
       </div>
-    </section>
-  </footer>
+      <p id="admin-phrase-status" class="text-zinc-300 text-sm mt-2"></p>
+    </div>
+  </section>
 
   <script src="./editable-content.js"></script>
   <script src="./app.js"></script>
   <script src="./admin-gate.js"></script>
 </body>
 </html>
+
 

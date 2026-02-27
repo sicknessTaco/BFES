@@ -61,7 +61,7 @@
 
       <section class="glass rounded-3xl p-6">
         <h2 class="font-display text-3xl">Membresias y precios</h2>
-        <p class="text-zinc-300 mt-1">Lo que guardes aqui se usa en Stripe Checkout de membresias.</p>
+        <p class="text-zinc-300 mt-1">Gestiona planes y precios de membresias.</p>
         <form id="membership-form" class="mt-4 grid md:grid-cols-2 gap-3">
           <input id="membership-id" placeholder="id (ej. bf-golden)" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" required />
           <input id="membership-name" placeholder="Nombre" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" required />
@@ -71,6 +71,7 @@
           <input id="membership-highlight" placeholder="Highlight" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" />
           <input id="membership-stripe-price-id" placeholder="stripePriceId (opcional)" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2 md:col-span-2" />
           <textarea id="membership-perks" rows="3" placeholder="Perks (uno por linea)" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2 md:col-span-2"></textarea>
+          <textarea id="membership-download-access" rows="3" placeholder="Acceso descargas por ID de juego (uno por linea, o all)" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2 md:col-span-2"></textarea>
           <button class="md:col-span-2 px-4 py-2 rounded-lg border border-white/20 hover:border-ember">Guardar membresia</button>
         </form>
         <p id="membership-admin-status" class="mt-2 text-zinc-300"></p>
@@ -82,11 +83,7 @@
           <h2 class="font-display text-3xl">Cuentas de Membresia</h2>
           <div class="flex items-center gap-2">
             <label class="text-sm text-zinc-300">Plan</label>
-            <select id="member-log-plan" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2">
-              <option value="">Todos</option>
-              <option value="bf-golden">BF Golden</option>
-              <option value="bf-nocturna">BF: Nocturna</option>
-            </select>
+            <select id="member-log-plan" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2"><option value="">Todos</option></select>
             <button id="member-log-refresh" class="px-3 py-2 rounded-lg border border-white/20 hover:border-ember">Cargar</button>
           </div>
         </div>
@@ -117,6 +114,7 @@
           <input id="coupon-expires-admin" placeholder="Vence (YYYY-MM-DD)" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" />
           <input id="coupon-description-admin" placeholder="Descripcion" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2 md:col-span-2" />
           <label class="flex items-center gap-2"><input id="coupon-active-admin" type="checkbox" checked>Activo</label>
+          <label class="flex items-center gap-2"><input id="coupon-visible-admin" type="checkbox" checked>Visible en pagina</label>
           <button class="md:col-span-3 px-4 py-2 rounded-lg border border-white/20 hover:border-ember">Guardar cupon</button>
         </form>
         <p id="coupon-admin-status" class="mt-2 text-zinc-300"></p>
@@ -125,7 +123,7 @@
 
       <section class="glass rounded-3xl p-6">
         <h2 class="font-display text-3xl">Juegos y precios</h2>
-        <p class="text-zinc-300 mt-1">Los precios se usan directo en Stripe Checkout de juegos.</p>
+        <p class="text-zinc-300 mt-1">Gestiona juegos y precios del marketplace.</p>
         <form id="game-form" class="mt-4 grid md:grid-cols-2 gap-3">
           <input id="id" placeholder="id (ej. dark-signal)" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" required />
           <input id="title" placeholder="Titulo" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" required />
@@ -155,6 +153,10 @@
   <script src="./marketplace.js"></script>
 </body>
 </html>
+
+
+
+
 
 
 

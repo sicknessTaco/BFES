@@ -60,17 +60,24 @@ function matchPlan(planId, target) {
   return String(target || "").trim().toLowerCase() === String(planId).trim().toLowerCase();
 }
 
-export function registerMembershipUser(email, password, membershipInfo) {
+export function registerMembershipUser(email, password, membershipInfo, deviceId) {
   const userEmail = normalizeEmail(email);
   if (!userEmail) throw new Error("email is required");
   if (String(password || "").length < 8) throw new Error("password must be at least 8 characters");
+  const normalizedDeviceId = String(deviceId || "").trim();
+  if (!normalizedDeviceId) throw new Error("device id is required");
 
   const state = readStore();
   const idx = state.users.findIndex((item) => item.email === userEmail);
+  const existing = idx >= 0 ? state.users[idx] : null;
+  if (existing?.deviceId && existing.deviceId !== normalizedDeviceId) {
+    throw new Error("account is locked to another device");
+  }
   const pwd = hashPassword(password);
 
   const nextUser = {
     email: userEmail,
+    deviceId: existing?.deviceId || normalizedDeviceId,
     salt: pwd.salt,
     passwordHash: pwd.hash,
     membership: {
@@ -97,8 +104,10 @@ export function registerMembershipUser(email, password, membershipInfo) {
   return { email: nextUser.email, membership: nextUser.membership };
 }
 
-export function loginMembershipUser(email, password) {
+export function loginMembershipUser(email, password, deviceId) {
   const userEmail = normalizeEmail(email);
+  const normalizedDeviceId = String(deviceId || "").trim();
+  if (!normalizedDeviceId) throw new Error("device id is required");
   const state = readStore();
   const user = state.users.find((item) => item.email === userEmail);
 
@@ -128,6 +137,23 @@ export function loginMembershipUser(email, password) {
   writeStore(state);
 
   if (!ok) return null;
+  if (user.deviceId && user.deviceId !== normalizedDeviceId) {
+    addLog(state, {
+      action: "login",
+      email: userEmail,
+      planId: user.membership?.planId || "unknown",
+      success: false,
+      detail: "device mismatch"
+    });
+    writeStore(state);
+    return null;
+  }
+
+  if (!user.deviceId) {
+    user.deviceId = normalizedDeviceId;
+    writeStore(state);
+  }
+
   return { email: user.email, membership: user.membership };
 }
 
@@ -152,7 +178,8 @@ export function listMembershipAccounts(filter = {}) {
         sessionId: user.membership?.sessionId || "",
         activatedAt: user.membership?.activatedAt || "",
         updatedAt: user.membership?.updatedAt || user.membership?.activatedAt || ""
-      }
+      },
+      deviceLocked: Boolean(user.deviceId)
     }))
     .sort((a, b) => (b.membership.activatedAt || "").localeCompare(a.membership.activatedAt || ""));
 
