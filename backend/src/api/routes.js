@@ -18,6 +18,13 @@ import {
   updateCoupon,
   updateMarketplaceGame
 } from "../services/marketplace.store.js";
+import {
+  addNewsPage,
+  getNewsPage,
+  listNewsPages,
+  removeNewsPage,
+  updateNewsPage
+} from "../services/news.store.js";
 
 export const apiRouter = Router();
 const ADMIN_TOKEN_TTL = "7d";
@@ -77,6 +84,16 @@ apiRouter.get("/contact/config", (req, res) => {
     toName: process.env.EMAILJS_TO_NAME || "BlackForge Support",
     toEmail: process.env.EMAILJS_TO_EMAIL || "support@blackforge.dev"
   });
+});
+
+apiRouter.get("/news", (req, res) => {
+  return res.json({ pages: listNewsPages({ includeDrafts: false }) });
+});
+
+apiRouter.get("/news/:slug", (req, res) => {
+  const page = getNewsPage(req.params.slug, { includeDrafts: false });
+  if (!page) return res.status(404).json({ error: "news page not found" });
+  return res.json({ page });
 });
 
 apiRouter.post("/admin/auth/login", (req, res) => {
@@ -178,6 +195,37 @@ apiRouter.put("/admin/marketplace/coupons/:code", requireAdmin, (req, res) => {
 apiRouter.delete("/admin/marketplace/coupons/:code", requireAdmin, (req, res) => {
   try {
     removeCoupon(req.params.code);
+    return res.json({ ok: true });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+apiRouter.get("/admin/news", requireAdmin, (req, res) => {
+  return res.json({ pages: listNewsPages({ includeDrafts: true }) });
+});
+
+apiRouter.post("/admin/news", requireAdmin, (req, res) => {
+  try {
+    const page = addNewsPage(req.body || {});
+    return res.status(201).json({ ok: true, page });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+apiRouter.put("/admin/news/:slug", requireAdmin, (req, res) => {
+  try {
+    const page = updateNewsPage(req.params.slug, req.body || {});
+    return res.json({ ok: true, page });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+});
+
+apiRouter.delete("/admin/news/:slug", requireAdmin, (req, res) => {
+  try {
+    removeNewsPage(req.params.slug);
     return res.json({ ok: true });
   } catch (error) {
     return res.status(400).json({ error: error.message });
