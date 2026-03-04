@@ -16,6 +16,13 @@ export function createApp() {
 
   app.use("/api", apiRouter);
 
+  app.get("/demo/:demoId", (req, res) => {
+    return res.sendFile(path.join(frontendPath, "demo_download.html"));
+  });
+  app.get("/noticias/:slug", (req, res) => {
+    return res.sendFile(path.join(frontendPath, "noticia.html"));
+  });
+
   app.use(express.static(frontendPath));
   app.get("*", (req, res) => {
     if (req.path.startsWith("/api")) return res.status(404).json({ error: "API route not found" });

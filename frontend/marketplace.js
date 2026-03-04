@@ -12,7 +12,10 @@ const API = {
   remove: (id) => `/api/admin/marketplace/games/${encodeURIComponent(id)}`,
   coupons: "/api/admin/marketplace/coupons",
   couponUpdate: (code) => `/api/admin/marketplace/coupons/${encodeURIComponent(code)}`,
-  couponDelete: (code) => `/api/admin/marketplace/coupons/${encodeURIComponent(code)}`
+  couponDelete: (code) => `/api/admin/marketplace/coupons/${encodeURIComponent(code)}`,
+  news: "/api/admin/news",
+  newsUpdate: (slug) => `/api/admin/news/${encodeURIComponent(slug)}`,
+  newsDelete: (slug) => `/api/admin/news/${encodeURIComponent(slug)}`
 };
 
 const authPanel = document.getElementById("auth-panel");
@@ -34,9 +37,13 @@ const ownerNote = document.getElementById("owner-only-note");
 const couponForm = document.getElementById("coupon-form");
 const couponStatus = document.getElementById("coupon-admin-status");
 const couponsList = document.getElementById("coupons-admin-list");
+const newsForm = document.getElementById("news-form");
+const newsStatus = document.getElementById("news-admin-status");
+const newsList = document.getElementById("news-admin-list");
 
 let editId = null;
 let editCouponCode = null;
+let editNewsSlug = null;
 let currentAdmin = "";
 
 function clientDeviceId() {
@@ -106,6 +113,17 @@ function readCouponForm() {
   };
 }
 
+function readNewsForm() {
+  return {
+    slug: document.getElementById("news-slug").value.trim(),
+    title: document.getElementById("news-title").value.trim(),
+    summary: document.getElementById("news-summary").value.trim(),
+    coverImage: document.getElementById("news-cover").value.trim(),
+    content: document.getElementById("news-content").value.trim(),
+    published: document.getElementById("news-published").checked
+  };
+}
+
 function fillForm(game) {
   document.getElementById("id").value = game.id || "";
   document.getElementById("title").value = game.title || "";
@@ -126,6 +144,15 @@ function fillCouponForm(coupon) {
   document.getElementById("coupon-visible-admin").checked = coupon.visible !== false;
 }
 
+function fillNewsForm(page) {
+  document.getElementById("news-slug").value = page.slug || "";
+  document.getElementById("news-title").value = page.title || "";
+  document.getElementById("news-summary").value = page.summary || "";
+  document.getElementById("news-cover").value = page.coverImage || "";
+  document.getElementById("news-content").value = page.content || "";
+  document.getElementById("news-published").checked = page.published === true;
+}
+
 function resetForm() {
   editId = null;
   form.reset();
@@ -136,6 +163,12 @@ function resetCouponForm() {
   couponForm.reset();
   document.getElementById("coupon-active-admin").checked = true;
   document.getElementById("coupon-visible-admin").checked = true;
+}
+
+function resetNewsForm() {
+  editNewsSlug = null;
+  newsForm.reset();
+  document.getElementById("news-published").checked = true;
 }
 
 function setAdminMode(enabled) {
@@ -184,6 +217,22 @@ function couponCard(coupon) {
   return article;
 }
 
+function newsCard(page) {
+  const article = document.createElement("article");
+  article.className = "glass rounded-2xl p-4 border border-white/10";
+  article.innerHTML = `
+    <p class="text-xs text-zinc-400">${page.slug}</p>
+    <h3 class="font-display text-xl">${page.title}</h3>
+    <p class="text-sm text-zinc-300 mt-1">${page.summary || ""}</p>
+    <p class="text-xs text-zinc-400 mt-2">${page.published ? "Publicada" : "Borrador"} | ${page.updatedAt || ""}</p>
+    <div class="mt-3 flex gap-2">
+      <button data-news-edit="${page.slug}" class="px-3 py-2 rounded-lg border border-white/20">Editar</button>
+      <button data-news-delete="${page.slug}" class="px-3 py-2 rounded-lg border border-red-500/50 text-red-300">Eliminar</button>
+    </div>
+  `;
+  return article;
+}
+
 async function loadMarketplace() {
   const data = await request(API.list);
 
@@ -193,6 +242,13 @@ async function loadMarketplace() {
   couponsList.innerHTML = "";
   (data.coupons || []).forEach((coupon) => couponsList.appendChild(couponCard(coupon)));
 
+  return data;
+}
+
+async function loadNews() {
+  const data = await request(API.news);
+  newsList.innerHTML = "";
+  (data.pages || []).forEach((page) => newsList.appendChild(newsCard(page)));
   return data;
 }
 
@@ -219,6 +275,7 @@ loginForm.addEventListener("submit", async (event) => {
     setAdminMode(true);
     updateOwnerAccessUI();
     await loadMarketplace();
+    await loadNews();
     await loadUsers();
   } catch (error) {
     authStatus.textContent = error.message;
@@ -280,6 +337,25 @@ couponForm.addEventListener("submit", async (event) => {
   }
 });
 
+newsForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  try {
+    const payload = readNewsForm();
+    if (editNewsSlug) {
+      await request(API.newsUpdate(editNewsSlug), { method: "PUT", body: JSON.stringify(payload) });
+      newsStatus.textContent = `Noticia actualizada: ${editNewsSlug}`;
+    } else {
+      await request(API.news, { method: "POST", body: JSON.stringify(payload) });
+      newsStatus.textContent = `Noticia publicada: ${payload.slug || payload.title}`;
+    }
+    resetNewsForm();
+    await loadNews();
+  } catch (error) {
+    newsStatus.textContent = error.message;
+  }
+});
+
 couponsList.addEventListener("click", async (event) => {
   const edit = event.target.closest("button[data-coupon-edit]");
   const del = event.target.closest("button[data-coupon-delete]");
@@ -306,6 +382,30 @@ couponsList.addEventListener("click", async (event) => {
   }
 });
 
+newsList.addEventListener("click", async (event) => {
+  const edit = event.target.closest("button[data-news-edit]");
+  const del = event.target.closest("button[data-news-delete]");
+  if (!edit && !del) return;
+
+  try {
+    const data = await loadNews();
+    if (del) {
+      await request(API.newsDelete(del.dataset.newsDelete), { method: "DELETE" });
+      newsStatus.textContent = `Noticia eliminada: ${del.dataset.newsDelete}`;
+      await loadNews();
+      return;
+    }
+
+    const page = (data.pages || []).find((item) => item.slug === edit.dataset.newsEdit);
+    if (!page) throw new Error("noticia no encontrada");
+    editNewsSlug = page.slug;
+    fillNewsForm(page);
+    newsStatus.textContent = `Editando noticia: ${page.slug}`;
+  } catch (error) {
+    newsStatus.textContent = error.message;
+  }
+});
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -329,6 +429,7 @@ form.addEventListener("submit", async (event) => {
 refreshBtn.addEventListener("click", async () => {
   statusEl.textContent = "";
   await loadMarketplace();
+  await loadNews();
 });
 
 gamesList.addEventListener("click", async (event) => {
@@ -372,6 +473,7 @@ gamesList.addEventListener("click", async (event) => {
     setAdminMode(true);
     updateOwnerAccessUI();
     await loadMarketplace();
+    await loadNews();
     await loadUsers();
   } catch {
     setToken("");
