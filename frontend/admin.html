@@ -26,9 +26,7 @@
   <header class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
     <nav class="glass rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
       <div class="flex items-center gap-3"><img src="./imagenes/logo.png" alt="BlackForge logo" class="w-10 h-10 rounded-lg object-cover border border-white/20 bg-black/30" onerror="this.style.display='none';this.nextElementSibling.style.marginLeft='0';" /><p class="font-display text-lg tracking-[2px]">ADMIN MARKETPLACE</p></div>
-      <div class="flex flex-wrap gap-3 text-sm sm:text-base">
-        <a href="./juegos.html" class="hover:text-ember">Volver a Marketplace</a>
-      </div>
+      <div class="flex flex-wrap gap-3 text-sm sm:text-base"><a href="./juegos.html" class="hover:text-ember">Volver a Marketplace</a></div>
     </nav>
   </header>
 
@@ -59,52 +57,6 @@
         <div id="users-list" class="mt-3 text-sm text-zinc-400"></div>
       </section>
 
-      <section class="glass rounded-3xl p-6">
-        <h2 class="font-display text-3xl">Membresias y precios</h2>
-        <p class="text-zinc-300 mt-1">Gestiona planes y precios de membresias.</p>
-        <form id="membership-form" class="mt-4 grid md:grid-cols-2 gap-3">
-          <input id="membership-id" placeholder="id (ej. bf-golden)" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" required />
-          <input id="membership-name" placeholder="Nombre" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" required />
-          <select id="membership-interval" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2"><option value="mes">mes</option><option value="ano">ano</option></select>
-          <input id="membership-price" type="number" step="0.01" placeholder="Precio" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" required />
-          <input id="membership-tier" placeholder="Tier (Base/Pro)" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" />
-          <input id="membership-highlight" placeholder="Highlight" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" />
-          <input id="membership-stripe-price-id" placeholder="stripePriceId (opcional)" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2 md:col-span-2" />
-          <textarea id="membership-perks" rows="3" placeholder="Perks (uno por linea)" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2 md:col-span-2"></textarea>
-          <textarea id="membership-download-access" rows="3" placeholder="Acceso descargas por ID de juego (uno por linea, o all)" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2 md:col-span-2"></textarea>
-          <button class="md:col-span-2 px-4 py-2 rounded-lg border border-white/20 hover:border-ember">Guardar membresia</button>
-        </form>
-        <p id="membership-admin-status" class="mt-2 text-zinc-300"></p>
-        <div id="memberships-admin-list" class="grid md:grid-cols-2 gap-3 mt-3"></div>
-      </section>
-
-            <section class="glass rounded-3xl p-6">
-        <div class="flex items-center justify-between gap-4 flex-wrap">
-          <h2 class="font-display text-3xl">Cuentas de Membresia</h2>
-          <div class="flex items-center gap-2">
-            <label class="text-sm text-zinc-300">Plan</label>
-            <select id="member-log-plan" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2"><option value="">Todos</option></select>
-            <button id="member-log-refresh" class="px-3 py-2 rounded-lg border border-white/20 hover:border-ember">Cargar</button>
-          </div>
-        </div>
-        <p id="member-log-status" class="mt-2 text-zinc-300"></p>
-
-        <div class="mt-4 grid md:grid-cols-2 gap-4">
-          <article class="glass rounded-2xl p-4 border border-white/10">
-            <h3 class="font-display text-xl">Resumen por plan</h3>
-            <div id="member-plan-totals" class="mt-3 text-sm text-zinc-300 space-y-1"></div>
-          </article>
-          <article class="glass rounded-2xl p-4 border border-white/10">
-            <h3 class="font-display text-xl">Logs recientes</h3>
-            <div id="member-logs" class="mt-3 text-xs text-zinc-300 max-h-56 overflow-auto space-y-2"></div>
-          </article>
-        </div>
-
-        <div class="mt-4">
-          <h3 class="font-display text-xl">Cuentas registradas</h3>
-          <div id="member-accounts" class="grid md:grid-cols-2 lg:grid-cols-3 gap-3 mt-3"></div>
-        </div>
-      </section>
       <section class="glass rounded-3xl p-6">
         <h2 class="font-display text-3xl">Cupones</h2>
         <form id="coupon-form" class="mt-4 grid md:grid-cols-3 gap-3">
@@ -153,10 +105,4 @@
   <script src="./marketplace.js"></script>
 </body>
 </html>
-
-
-
-
-
-
 

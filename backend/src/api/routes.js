@@ -6,34 +6,24 @@ import {
   listAdminUsers,
   removeAdminUser
 } from "../services/admin-auth.store.js";
-import { createGameCheckout, createCartCheckout, createMembershipCheckout, confirmCheckoutSession, getCheckoutSessionDetails } from "../services/stripe.service.js";
+import { createGameCheckout, createCartCheckout, confirmCheckoutSession } from "../services/stripe.service.js";
 import { createDownloadToken, getDownloadableFiles, verifyDownloadToken } from "../services/download.service.js";
 import {
   addCoupon,
   addMarketplaceGame,
-  addMembership,
   getMarketplaceCatalog,
   listCoupons,
-  listMemberships,
   removeCoupon,
   removeMarketplaceGame,
-  removeMembership,
   updateCoupon,
-  updateMarketplaceGame,
-  updateMembership
+  updateMarketplaceGame
 } from "../services/marketplace.store.js";
-import { getMembershipUser, listMembershipAccounts, listMembershipLogs, loginMembershipUser, registerMembershipUser } from "../services/member.store.js";
 
 export const apiRouter = Router();
 const ADMIN_TOKEN_TTL = "7d";
-const MEMBER_TOKEN_TTL = "14d";
 
 function adminJwtSecret() {
   return process.env.ADMIN_JWT_SECRET || process.env.DOWNLOAD_TOKEN_SECRET || "change_me_admin_jwt";
-}
-
-function memberJwtSecret() {
-  return process.env.MEMBER_JWT_SECRET || process.env.DOWNLOAD_TOKEN_SECRET || "change_me_member_jwt";
 }
 
 function getClientDeviceId(req) {
@@ -42,10 +32,6 @@ function getClientDeviceId(req) {
 
 function signAdminToken(username, deviceId) {
   return jwt.sign({ role: "admin", username, deviceId }, adminJwtSecret(), { expiresIn: ADMIN_TOKEN_TTL });
-}
-
-function signMemberToken(email, deviceId) {
-  return jwt.sign({ role: "member", email, deviceId }, memberJwtSecret(), { expiresIn: MEMBER_TOKEN_TTL });
 }
 
 function requireAdmin(req, res, next) {
@@ -72,25 +58,6 @@ function requireOwner(req, res, next) {
     return res.status(403).json({ error: "only knoir can manage users" });
   }
   return next();
-}
-
-function requireMember(req, res, next) {
-  const authHeader = req.headers.authorization || "";
-  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-  if (!token) return res.status(401).json({ error: "member token required" });
-
-  try {
-    const payload = jwt.verify(token, memberJwtSecret());
-    if (payload.role !== "member") return res.status(403).json({ error: "invalid member token" });
-    const deviceId = getClientDeviceId(req);
-    if (!deviceId || payload.deviceId !== deviceId) {
-      return res.status(401).json({ error: "member token invalid for this device" });
-    }
-    req.member = payload;
-    return next();
-  } catch {
-    return res.status(401).json({ error: "invalid or expired member token" });
-  }
 }
 
 apiRouter.get("/health", (req, res) => {
@@ -186,37 +153,6 @@ apiRouter.delete("/admin/marketplace/games/:gameId", requireAdmin, (req, res) =>
   }
 });
 
-apiRouter.get("/admin/marketplace/memberships", requireAdmin, (req, res) => {
-  return res.json({ memberships: listMemberships() });
-});
-
-apiRouter.post("/admin/marketplace/memberships", requireAdmin, (req, res) => {
-  try {
-    const membership = addMembership(req.body || {});
-    return res.status(201).json({ ok: true, membership });
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
-});
-
-apiRouter.put("/admin/marketplace/memberships/:planId", requireAdmin, (req, res) => {
-  try {
-    const membership = updateMembership(req.params.planId, req.body || {});
-    return res.json({ ok: true, membership });
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
-});
-
-apiRouter.delete("/admin/marketplace/memberships/:planId", requireAdmin, (req, res) => {
-  try {
-    removeMembership(req.params.planId);
-    return res.json({ ok: true });
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
-});
-
 apiRouter.get("/admin/marketplace/coupons", requireAdmin, (req, res) => {
   return res.json({ coupons: listCoupons() });
 });
@@ -248,108 +184,6 @@ apiRouter.delete("/admin/marketplace/coupons/:code", requireAdmin, (req, res) =>
   }
 });
 
-
-apiRouter.get("/admin/membership/accounts", requireAdmin, (req, res) => {
-  try {
-    const planId = req.query.planId;
-    const data = listMembershipAccounts({ planId });
-    return res.json({ ok: true, ...data });
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
-});
-
-apiRouter.get("/admin/membership/logs", requireAdmin, (req, res) => {
-  try {
-    const planId = req.query.planId;
-    const limit = req.query.limit;
-    const logs = listMembershipLogs({ planId, limit });
-    return res.json({ ok: true, logs });
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
-});
-apiRouter.post("/membership/register", async (req, res) => {
-  try {
-    const { sessionId, email, password } = req.body || {};
-    const deviceId = getClientDeviceId(req);
-    if (!deviceId) return res.status(400).json({ error: "device id is required" });
-    if (!sessionId) return res.status(400).json({ error: "sessionId is required" });
-
-    const session = await getCheckoutSessionDetails(sessionId);
-    const paid = session.payment_status === "paid" || session.status === "complete";
-    if (!paid) return res.status(402).json({ error: "membership payment not confirmed" });
-    if (session.metadata?.purchaseType !== "membership") {
-      return res.status(400).json({ error: "this checkout is not a membership" });
-    }
-
-    const user = registerMembershipUser(email, password, {
-      planId: session.metadata?.planId || "unknown",
-      sessionId
-    }, deviceId);
-
-    const token = signMemberToken(user.email, deviceId);
-    return res.json({ ok: true, token, user });
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
-});
-
-apiRouter.post("/membership/login", (req, res) => {
-  try {
-    const { email, password } = req.body || {};
-    const deviceId = getClientDeviceId(req);
-    if (!deviceId) return res.status(400).json({ error: "device id is required" });
-    const user = loginMembershipUser(email, password, deviceId);
-    if (!user) return res.status(401).json({ error: "invalid credentials" });
-
-    const token = signMemberToken(user.email, deviceId);
-    return res.json({ ok: true, token, user });
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
-});
-
-apiRouter.get("/membership/me", requireMember, (req, res) => {
-  const user = getMembershipUser(req.member.email);
-  if (!user) return res.status(404).json({ error: "membership user not found" });
-  return res.json({ ok: true, user });
-});
-
-apiRouter.get("/membership/downloads", requireMember, (req, res) => {
-  try {
-    const user = getMembershipUser(req.member.email);
-    if (!user) return res.status(404).json({ error: "membership user not found" });
-    if (!user.membership?.active) return res.status(403).json({ error: "membership inactive" });
-
-    const catalog = getMarketplaceCatalog();
-    const plan = (catalog.memberships || []).find((item) => item.id === user.membership.planId);
-    const access = Array.isArray(plan?.downloadAccessGameIds) && plan.downloadAccessGameIds.length
-      ? plan.downloadAccessGameIds
-      : ["all"];
-    const allowedIds = access.some((id) => String(id).toLowerCase() === "all" || id === "*") ? null : access;
-
-    const files = getDownloadableFiles({
-      type: "membership",
-      itemIds: allowedIds || undefined
-    });
-    const downloads = files.map((file) => ({
-      id: file.id,
-      name: file.name,
-      url: `/api/download/${file.id}?token=${encodeURIComponent(createDownloadToken(file.id))}`
-    }));
-
-    return res.json({
-      ok: true,
-      planId: user.membership.planId,
-      access: allowedIds || ["all"],
-      downloads
-    });
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
-});
-
 apiRouter.post("/checkout/game", async (req, res) => {
   try {
     const { gameId, couponCode } = req.body || {};
@@ -370,18 +204,6 @@ apiRouter.post("/checkout/cart", async (req, res) => {
     }
 
     const session = await createCartCheckout(gameIds, couponCode);
-    return res.json({ id: session.id, url: session.url });
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
-});
-
-apiRouter.post("/checkout/membership", async (req, res) => {
-  try {
-    const { planId } = req.body;
-    if (!planId) return res.status(400).json({ error: "planId is required" });
-
-    const session = await createMembershipCheckout(planId);
     return res.json({ id: session.id, url: session.url });
   } catch (error) {
     return res.status(400).json({ error: error.message });
@@ -436,6 +258,3 @@ apiRouter.get("/download/:gameId", (req, res) => {
     return res.status(401).json({ error: error.message });
   }
 });
-
-
-

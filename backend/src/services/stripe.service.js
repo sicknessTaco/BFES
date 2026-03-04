@@ -113,31 +113,6 @@ function createUnitLineItems(games, coupon) {
   };
 }
 
-function stripeInterval(interval) {
-  const value = String(interval || "").toLowerCase();
-  return ["ano", "año", "year", "annual", "yearly"].includes(value) ? "year" : "month";
-}
-
-function membershipLineItem(plan) {
-  if (forceStripePriceIds && plan.stripePriceId && !plan.stripePriceId.startsWith("price_pass_")) {
-    return { price: plan.stripePriceId, quantity: 1 };
-  }
-
-  return {
-    price_data: {
-      currency,
-      product_data: {
-        name: `${plan.name} ${plan.interval}`
-      },
-      recurring: {
-        interval: stripeInterval(plan.interval)
-      },
-      unit_amount: toCents(plan.price)
-    },
-    quantity: 1
-  };
-}
-
 export async function getCheckoutSessionDetails(sessionId) {
   assertStripeConfigured();
   return stripe.checkout.sessions.retrieve(sessionId);
@@ -210,43 +185,13 @@ export async function createCartCheckout(gameIds, couponCode) {
   });
 }
 
-export async function createMembershipCheckout(planId) {
-  assertStripeConfigured();
-  const catalog = getMarketplaceCatalog();
-
-  const plan = catalog.memberships.find((item) => item.id === planId);
-  if (!plan) throw new Error("Membership plan not found");
-
-  return stripe.checkout.sessions.create({
-    mode: "subscription",
-    payment_method_types: ["card"],
-    line_items: [membershipLineItem(plan)],
-    success_url: `${frontendUrl}/membership-success.html?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${frontendUrl}/membresia.html`,
-    metadata: {
-      purchaseType: "membership",
-      planId: plan.id
-    }
-  });
-}
-
 export async function confirmCheckoutSession(sessionId) {
   assertStripeConfigured();
-  const catalog = getMarketplaceCatalog();
-
   const session = await stripe.checkout.sessions.retrieve(sessionId);
   const paid = session.payment_status === "paid" || session.status === "complete";
 
   if (!paid) {
     return { paid: false };
-  }
-
-  if (session.metadata?.purchaseType === "membership") {
-    return {
-      paid: true,
-      type: "membership",
-      itemIds: catalog.games.map((game) => game.id)
-    };
   }
 
   return {

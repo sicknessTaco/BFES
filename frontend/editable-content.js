@@ -8,7 +8,7 @@
     addToCartLabel: "Carrito",
     buyNowLabel: "Comprar",
     removeLabel: "Quitar",
-    subscribeLabel: "Suscribirme"
+    subscribeLabel: "Ver"
   },
   home: {
     heroQuote: "No hacemos juegos para pasar el rato. Hacemos mundos para obsesionarte.",

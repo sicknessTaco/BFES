@@ -11,22 +11,19 @@ const UI = {
   cartCheckoutLoading: EDITABLE.ui?.cartCheckoutLoading || "Redirigiendo a Stripe...",
   addToCartLabel: EDITABLE.ui?.addToCartLabel || "Carrito",
   buyNowLabel: EDITABLE.ui?.buyNowLabel || "Comprar",
-  removeLabel: EDITABLE.ui?.removeLabel || "Quitar",
-  subscribeLabel: EDITABLE.ui?.subscribeLabel || "Suscribirme"
+  removeLabel: EDITABLE.ui?.removeLabel || "Quitar"
 };
 
 const money = (value) => `$${Number(value).toFixed(2)}`;
 
 const state = {
   games: [],
-  plans: [],
   coupons: [],
   cart: [],
   appliedCoupon: null
 };
 
 const gamesGrid = document.getElementById("games-grid");
-const plansGrid = document.getElementById("plans-grid");
 const cartItems = document.getElementById("cart-items");
 const cartTotal = document.getElementById("cart-total");
 const cartCheckoutBtn = document.getElementById("cart-checkout-btn");
@@ -62,22 +59,9 @@ function renderEditableContent() {
   const announce = document.getElementById("editable-announce");
   if (announce) announce.textContent = EDITABLE.home?.announce || "";
 
-  const manifesto = document.getElementById("studio-manifesto");
-  if (manifesto) manifesto.textContent = EDITABLE.studio?.manifesto || "";
-
   if (cartTitle) cartTitle.textContent = UI.cartTitle;
   if (cartTotalLabel) cartTotalLabel.textContent = UI.cartTotalLabel;
   if (cartCheckoutBtn) cartCheckoutBtn.textContent = UI.cartCheckoutLabel;
-
-  const pillars = document.getElementById("studio-pillars");
-  if (pillars) {
-    pillars.innerHTML = (EDITABLE.studio?.pillars || []).map((item) => `
-      <article class="bg-black/20 border border-white/10 rounded-2xl p-4">
-        <h2 class="font-display text-xl text-red-300">Pilar</h2>
-        <p class="text-zinc-300 mt-2">${item}</p>
-      </article>
-    `).join("");
-  }
 
   const homeUniverse = document.getElementById("home-universe-cards");
   if (homeUniverse) {
@@ -254,38 +238,6 @@ function renderGames() {
     .join("");
 }
 
-function renderPlans() {
-  if (!plansGrid) return;
-
-  plansGrid.innerHTML = state.plans
-    .map((plan, index) => {
-      const pro = plan.name.toLowerCase().includes("nocturna") || (plan.tier || "").toLowerCase() === "pro";
-      const glow = pro
-        ? "border-red-400/70 shadow-[0_0_45px_rgba(255,40,40,.35)]"
-        : "border-amber-300/40 shadow-[0_0_35px_rgba(255,205,60,.2)]";
-      const cta = pro ? "bg-gradient-to-r from-red-700 to-red-500" : "bg-gradient-to-r from-amber-500 to-yellow-300 text-black";
-      const badge = pro ? "Pro" : "Base";
-      const perks = Array.isArray(plan.perks) && plan.perks.length
-        ? plan.perks.map((perk) => `<li>${perk}</li>`).join("")
-        : "<li>Acceso completo al catalogo</li><li>Lanzamientos dia 1</li><li>Descuentos exclusivos</li>";
-
-      return `
-      <article class="glass rounded-2xl p-5 border ${glow} animate-appear hover:-translate-y-1 transition duration-300" style="animation-delay:${index * 90}ms">
-        <div class="flex items-center justify-between gap-2">
-          <p class="text-red-300 text-xs tracking-[2px] uppercase">${plan.interval}</p>
-          <span class="text-[11px] uppercase tracking-[1.5px] px-2 py-1 rounded-full bg-black/40 border border-white/20">${badge}</span>
-        </div>
-        <h3 class="font-display text-2xl mt-2">${plan.name}</h3>
-        <p class="text-zinc-300 text-sm mt-1">${plan.highlight || "Membresia premium"}</p>
-        <p class="text-3xl mt-3 font-display">${money(plan.price)}<span class="text-base text-zinc-400">/${plan.interval}</span></p>
-        <ul class="text-zinc-200 mt-3 space-y-1 text-sm list-disc list-inside">${perks}</ul>
-        <button data-subscribe="${plan.id}" class="mt-4 w-full px-4 py-2 rounded-lg ${cta} hover:brightness-110 transition">${UI.subscribeLabel}</button>
-      </article>
-    `;
-    })
-    .join("");
-}
-
 function applyCoupon(code) {
   const normalized = String(code || "").trim().toUpperCase();
   if (!normalized) {
@@ -348,10 +300,8 @@ async function init() {
   }
 
   state.games = data.games || [];
-  state.plans = data.memberships || [];
   state.coupons = data.coupons || [];
   renderGames();
-  renderPlans();
   renderCoupons();
 }
 
@@ -359,7 +309,6 @@ document.addEventListener("click", async (event) => {
   const add = event.target.closest("button[data-add]");
   const buy = event.target.closest("button[data-buy]");
   const removeById = event.target.closest("button[data-remove-id]");
-  const subscribe = event.target.closest("button[data-subscribe]");
   const cartCheckout = event.target.closest("button#cart-checkout-btn");
   const applyCouponBtn = event.target.closest("button#apply-coupon-btn");
 
@@ -393,10 +342,6 @@ document.addEventListener("click", async (event) => {
     if (applyCouponBtn) {
       applyCoupon(couponCodeInput?.value || "");
     }
-
-    if (subscribe) {
-      await createCheckout("/api/checkout/membership", { planId: subscribe.dataset.subscribe });
-    }
   } catch (error) {
     if (cartCheckoutStatus) cartCheckoutStatus.textContent = error.message;
     alert(error.message);
@@ -405,5 +350,3 @@ document.addEventListener("click", async (event) => {
 });
 
 init();
-
-

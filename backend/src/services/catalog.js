@@ -1,4 +1,4 @@
-﻿export const catalog = {
+export const catalog = {
   games: [
     {
       id: "iron-horizon",
@@ -23,39 +23,6 @@
       description: "Story-driven thriller with branching endings.",
       price: 34.99,
       stripePriceId: "price_game_echo_protocol"
-    }
-  ],
-  memberships: [
-    {
-      id: "bf-golden",
-      name: "BF Golden",
-      interval: "mes",
-      price: 7.99,
-      stripePriceId: "price_pass_bf_golden",
-      tier: "Base",
-      highlight: "Equivalente a EA Play",
-      downloadAccessGameIds: ["iron-horizon", "neon-rush-2088"],
-      perks: [
-        "Acceso al catalogo base",
-        "Pruebas anticipadas de nuevos builds",
-        "10% de descuento en compras"
-      ]
-    },
-    {
-      id: "bf-nocturna",
-      name: "BF: Nocturna",
-      interval: "mes",
-      price: 14.99,
-      stripePriceId: "price_pass_bf_nocturna",
-      tier: "Pro",
-      highlight: "Version pro estilo EA Play Pro",
-      downloadAccessGameIds: ["all"],
-      perks: [
-        "Todo lo de BF Golden",
-        "Lanzamientos dia 1",
-        "Contenido adicional exclusivo",
-        "Prioridad en servidores y eventos"
-      ]
     }
   ]
 };

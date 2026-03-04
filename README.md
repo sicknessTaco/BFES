@@ -1,7 +1,7 @@
 ﻿# BlackForge Entertainment Software
 
 ## Estructura
-- frontend: HTML + Tailwind + JS de tienda y membresia.
+- frontend: HTML + Tailwind + JS de tienda y demos.
 - backend: API con Stripe para checkout y descargas firmadas.
 
 ## Setup rapido

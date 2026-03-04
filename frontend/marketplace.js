@@ -10,14 +10,9 @@ const API = {
   add: "/api/admin/marketplace/games",
   update: (id) => `/api/admin/marketplace/games/${encodeURIComponent(id)}`,
   remove: (id) => `/api/admin/marketplace/games/${encodeURIComponent(id)}`,
-  memberships: "/api/admin/marketplace/memberships",
-  membershipUpdate: (id) => `/api/admin/marketplace/memberships/${encodeURIComponent(id)}`,
-  membershipDelete: (id) => `/api/admin/marketplace/memberships/${encodeURIComponent(id)}`,
   coupons: "/api/admin/marketplace/coupons",
   couponUpdate: (code) => `/api/admin/marketplace/coupons/${encodeURIComponent(code)}`,
-  couponDelete: (code) => `/api/admin/marketplace/coupons/${encodeURIComponent(code)}`,
-  memberAccounts: "/api/admin/membership/accounts",
-  memberLogs: "/api/admin/membership/logs"
+  couponDelete: (code) => `/api/admin/marketplace/coupons/${encodeURIComponent(code)}`
 };
 
 const authPanel = document.getElementById("auth-panel");
@@ -36,24 +31,12 @@ const userStatus = document.getElementById("user-status");
 const usersList = document.getElementById("users-list");
 const ownerNote = document.getElementById("owner-only-note");
 
-const membershipForm = document.getElementById("membership-form");
-const membershipStatus = document.getElementById("membership-admin-status");
-const membershipsList = document.getElementById("memberships-admin-list");
-
 const couponForm = document.getElementById("coupon-form");
 const couponStatus = document.getElementById("coupon-admin-status");
 const couponsList = document.getElementById("coupons-admin-list");
 
-const memberPlanFilter = document.getElementById("member-log-plan");
-const memberLogRefresh = document.getElementById("member-log-refresh");
-const memberLogStatus = document.getElementById("member-log-status");
-const memberPlanTotals = document.getElementById("member-plan-totals");
-const memberAccounts = document.getElementById("member-accounts");
-const memberLogs = document.getElementById("member-logs");
-
 let editId = null;
 let editCouponCode = null;
-let editMembershipId = null;
 let currentAdmin = "";
 
 function clientDeviceId() {
@@ -111,28 +94,6 @@ function readForm() {
   };
 }
 
-function readMembershipForm() {
-  const access = document.getElementById("membership-download-access").value
-    .split(/\r?\n|,|\|/)
-    .map((item) => item.trim())
-    .filter(Boolean);
-
-  return {
-    id: document.getElementById("membership-id").value.trim(),
-    name: document.getElementById("membership-name").value.trim(),
-    interval: document.getElementById("membership-interval").value,
-    price: Number(document.getElementById("membership-price").value),
-    tier: document.getElementById("membership-tier").value.trim(),
-    highlight: document.getElementById("membership-highlight").value.trim(),
-    stripePriceId: document.getElementById("membership-stripe-price-id").value.trim(),
-    perks: document.getElementById("membership-perks").value
-      .split(/\r?\n/)
-      .map((item) => item.trim())
-      .filter(Boolean),
-    downloadAccessGameIds: access.length ? access : ["all"]
-  };
-}
-
 function readCouponForm() {
   return {
     code: document.getElementById("coupon-code-admin").value.trim().toUpperCase(),
@@ -155,20 +116,6 @@ function fillForm(game) {
   document.getElementById("image").value = game.image || "";
 }
 
-function fillMembershipForm(plan) {
-  document.getElementById("membership-id").value = plan.id || "";
-  document.getElementById("membership-name").value = plan.name || "";
-  document.getElementById("membership-interval").value = plan.interval || "mes";
-  document.getElementById("membership-price").value = plan.price || "";
-  document.getElementById("membership-tier").value = plan.tier || "";
-  document.getElementById("membership-highlight").value = plan.highlight || "";
-  document.getElementById("membership-stripe-price-id").value = plan.stripePriceId || "";
-  document.getElementById("membership-perks").value = Array.isArray(plan.perks) ? plan.perks.join("\n") : "";
-  document.getElementById("membership-download-access").value = Array.isArray(plan.downloadAccessGameIds)
-    ? plan.downloadAccessGameIds.join("\n")
-    : "all";
-}
-
 function fillCouponForm(coupon) {
   document.getElementById("coupon-code-admin").value = coupon.code || "";
   document.getElementById("coupon-type-admin").value = coupon.type || "percent";
@@ -182,13 +129,6 @@ function fillCouponForm(coupon) {
 function resetForm() {
   editId = null;
   form.reset();
-}
-
-function resetMembershipForm() {
-  editMembershipId = null;
-  membershipForm.reset();
-  document.getElementById("membership-interval").value = "mes";
-  document.getElementById("membership-download-access").value = "all";
 }
 
 function resetCouponForm() {
@@ -228,27 +168,6 @@ function gameCard(game) {
   return article;
 }
 
-function membershipCard(plan) {
-  const access = Array.isArray(plan.downloadAccessGameIds) && plan.downloadAccessGameIds.length
-    ? plan.downloadAccessGameIds.join(", ")
-    : "all";
-  const article = document.createElement("article");
-  article.className = "glass rounded-2xl p-4 border border-white/10";
-  article.innerHTML = `
-    <p class="text-xs text-zinc-400">${plan.id}</p>
-    <h3 class="font-display text-xl">${plan.name}</h3>
-    <p class="text-sm text-zinc-300 mt-1">${plan.interval} | ${plan.tier || "Base"}</p>
-    <p class="text-sm text-zinc-300 mt-1">${plan.highlight || ""}</p>
-    <p class="text-xs text-zinc-400 mt-1">Descargas: ${access}</p>
-    <p class="text-sm text-zinc-400 mt-2">${Number(plan.price).toFixed(2)} USD</p>
-    <div class="mt-3 flex gap-2">
-      <button data-membership-edit="${plan.id}" class="px-3 py-2 rounded-lg border border-white/20">Editar</button>
-      <button data-membership-delete="${plan.id}" class="px-3 py-2 rounded-lg border border-red-500/50 text-red-300">Eliminar</button>
-    </div>
-  `;
-  return article;
-}
-
 function couponCard(coupon) {
   const valueLabel = coupon.type === "percent" ? `${coupon.value}%` : `$${coupon.value}`;
   const article = document.createElement("article");
@@ -265,94 +184,11 @@ function couponCard(coupon) {
   return article;
 }
 
-function membershipAccountCard(user) {
-  const plan = user.membership?.planId || "unknown";
-  const active = user.membership?.active ? "Activa" : "Inactiva";
-  const activatedAt = user.membership?.activatedAt || "";
-  return `
-    <article class="glass rounded-2xl p-4 border border-white/10">
-      <p class="font-mono text-xs text-zinc-400">${user.email}</p>
-      <p class="mt-2 text-sm text-zinc-200">Plan: <strong>${plan}</strong></p>
-      <p class="text-sm text-zinc-300">Estado: ${active}</p>
-      <p class="text-xs text-zinc-500 mt-1">Activa desde: ${activatedAt || "N/A"}</p>
-    </article>
-  `;
-}
-
-function renderMembershipTotals(totals) {
-  if (!memberPlanTotals) return;
-  const entries = Object.entries(totals || {});
-  if (!entries.length) {
-    memberPlanTotals.innerHTML = '<p class="text-zinc-500">Sin cuentas registradas.</p>';
-    return;
-  }
-  memberPlanTotals.innerHTML = entries
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([plan, count]) => `<p><strong>${plan}</strong>: ${count}</p>`)
-    .join("");
-}
-
-function renderMembershipLogs(logs) {
-  if (!memberLogs) return;
-  if (!Array.isArray(logs) || !logs.length) {
-    memberLogs.innerHTML = '<p class="text-zinc-500">Sin logs.</p>';
-    return;
-  }
-
-  memberLogs.innerHTML = logs.map((log) => {
-    const status = log.success ? "OK" : "ERROR";
-    const color = log.success ? "text-emerald-300" : "text-red-300";
-    return `<div class="border border-white/10 rounded-lg p-2 bg-black/20"><p class="${color}">${status} ${log.action}</p><p>${log.email} | ${log.planId}</p><p class="text-zinc-500">${log.at}${log.detail ? ` | ${log.detail}` : ""}</p></div>`;
-  }).join("");
-}
-
-function renderMemberPlanFilter(memberships) {
-  if (!memberPlanFilter) return;
-
-  const current = memberPlanFilter.value || "";
-  const options = [`<option value="">Todos</option>`]
-    .concat(
-      (memberships || []).map((plan) => {
-        const label = plan.name ? `${plan.name} (${plan.id})` : plan.id;
-        return `<option value="${plan.id}">${label}</option>`;
-      })
-    )
-    .join("");
-
-  memberPlanFilter.innerHTML = options;
-  memberPlanFilter.value = current && (memberships || []).some((plan) => plan.id === current) ? current : "";
-}
-async function loadMembershipAdminData() {
-  if (!memberAccounts || !memberLogs) return;
-
-  const planId = memberPlanFilter?.value || "";
-  const query = planId ? `?planId=${encodeURIComponent(planId)}` : "";
-
-  const [accountsData, logsData] = await Promise.all([
-    request(`${API.memberAccounts}${query}`),
-    request(`${API.memberLogs}${query}`)
-  ]);
-
-  renderMembershipTotals(accountsData.totals || {});
-  memberAccounts.innerHTML = (accountsData.users || []).map(membershipAccountCard).join("");
-  if (!accountsData.users || accountsData.users.length === 0) {
-    memberAccounts.innerHTML = '<p class="text-zinc-500">No hay cuentas para este plan.</p>';
-  }
-
-  renderMembershipLogs(logsData.logs || []);
-  if (memberLogStatus) {
-    memberLogStatus.textContent = `Cuentas: ${(accountsData.users || []).length} | Logs: ${(logsData.logs || []).length}`;
-  }
-}
 async function loadMarketplace() {
   const data = await request(API.list);
 
   gamesList.innerHTML = "";
   (data.games || []).forEach((game) => gamesList.appendChild(gameCard(game)));
-
-  membershipsList.innerHTML = "";
-  (data.memberships || []).forEach((plan) => membershipsList.appendChild(membershipCard(plan)));
-  renderMemberPlanFilter(data.memberships || []);
 
   couponsList.innerHTML = "";
   (data.coupons || []).forEach((coupon) => couponsList.appendChild(couponCard(coupon)));
@@ -384,7 +220,6 @@ loginForm.addEventListener("submit", async (event) => {
     updateOwnerAccessUI();
     await loadMarketplace();
     await loadUsers();
-    await loadMembershipAdminData();
   } catch (error) {
     authStatus.textContent = error.message;
   }
@@ -422,52 +257,6 @@ usersList.addEventListener("click", async (event) => {
     await loadUsers();
   } catch (error) {
     userStatus.textContent = error.message;
-  }
-});
-
-membershipForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  try {
-    const payload = readMembershipForm();
-    if (editMembershipId) {
-      await request(API.membershipUpdate(editMembershipId), { method: "PUT", body: JSON.stringify(payload) });
-      membershipStatus.textContent = `Membresia actualizada: ${editMembershipId}`;
-    } else {
-      await request(API.memberships, { method: "POST", body: JSON.stringify(payload) });
-      membershipStatus.textContent = `Membresia agregada: ${payload.id}`;
-    }
-
-    resetMembershipForm();
-    await loadMarketplace();
-  } catch (error) {
-    membershipStatus.textContent = error.message;
-  }
-});
-
-membershipsList.addEventListener("click", async (event) => {
-  const edit = event.target.closest("button[data-membership-edit]");
-  const del = event.target.closest("button[data-membership-delete]");
-
-  try {
-    const data = await loadMarketplace();
-
-    if (del) {
-      await request(API.membershipDelete(del.dataset.membershipDelete), { method: "DELETE" });
-      membershipStatus.textContent = `Membresia eliminada: ${del.dataset.membershipDelete}`;
-      await loadMarketplace();
-      return;
-    }
-
-    if (edit) {
-      const plan = (data.memberships || []).find((item) => item.id === edit.dataset.membershipEdit);
-      if (!plan) throw new Error("membresia no encontrada");
-      editMembershipId = plan.id;
-      fillMembershipForm(plan);
-      membershipStatus.textContent = `Editando membresia: ${plan.id}`;
-    }
-  } catch (error) {
-    membershipStatus.textContent = error.message;
   }
 });
 
@@ -539,25 +328,7 @@ form.addEventListener("submit", async (event) => {
 
 refreshBtn.addEventListener("click", async () => {
   statusEl.textContent = "";
-  membershipStatus.textContent = "";
   await loadMarketplace();
-  await loadMembershipAdminData();
-});
-
-memberLogRefresh?.addEventListener("click", async () => {
-  try {
-    await loadMembershipAdminData();
-  } catch (error) {
-    if (memberLogStatus) memberLogStatus.textContent = error.message;
-  }
-});
-
-memberPlanFilter?.addEventListener("change", async () => {
-  try {
-    await loadMembershipAdminData();
-  } catch (error) {
-    if (memberLogStatus) memberLogStatus.textContent = error.message;
-  }
 });
 
 gamesList.addEventListener("click", async (event) => {
@@ -602,7 +373,6 @@ gamesList.addEventListener("click", async (event) => {
     updateOwnerAccessUI();
     await loadMarketplace();
     await loadUsers();
-    await loadMembershipAdminData();
   } catch {
     setToken("");
     currentAdmin = "";
@@ -610,22 +380,3 @@ gamesList.addEventListener("click", async (event) => {
     updateOwnerAccessUI();
   }
 })();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

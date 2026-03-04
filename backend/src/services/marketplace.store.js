@@ -35,7 +35,6 @@ function defaultCoupons() {
 function seedState() {
   return {
     games: defaultCatalog.games,
-    memberships: defaultCatalog.memberships,
     coupons: defaultCoupons()
   };
 }
@@ -55,7 +54,6 @@ function readStore() {
     const raw = fs.readFileSync(storePath, "utf8");
     const parsed = JSON.parse(sanitizeJson(raw));
     if (!Array.isArray(parsed.games)) parsed.games = [];
-    if (!Array.isArray(parsed.memberships)) parsed.memberships = defaultCatalog.memberships;
     if (!Array.isArray(parsed.coupons)) parsed.coupons = defaultCoupons();
     return parsed;
   } catch {
@@ -71,7 +69,8 @@ function readStore() {
 
 function writeStore(next) {
   ensureStore();
-  fs.writeFileSync(storePath, JSON.stringify(next, null, 2), "utf8");
+  const clean = { games: next.games || [], coupons: next.coupons || [] };
+  fs.writeFileSync(storePath, JSON.stringify(clean, null, 2), "utf8");
 }
 
 function normalizeGame(input) {
@@ -97,75 +96,6 @@ function normalizeGame(input) {
     price,
     stripePriceId: stripePriceId || `price_game_${id}`,
     image: image || `./imagenes/${id}.jpg`
-  };
-}
-
-function normalizeInterval(interval) {
-  const value = String(interval || "").trim().toLowerCase();
-  if (["mes", "month", "monthly"].includes(value)) return "mes";
-  if (["ano", "año", "year", "yearly", "annual"].includes(value)) return "ano";
-  throw new Error("membership interval must be mes or ano");
-}
-
-function normalizePerks(perks) {
-  if (Array.isArray(perks)) {
-    return perks.map((item) => String(item || "").trim()).filter(Boolean);
-  }
-
-  return String(perks || "")
-    .split(/\r?\n|,|\|/)
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-function normalizeDownloadAccess(access) {
-  if (Array.isArray(access)) {
-    const normalized = access
-      .map((item) => String(item || "").trim())
-      .filter(Boolean);
-    if (!normalized.length) return ["all"];
-    if (normalized.some((item) => item.toLowerCase() === "all" || item === "*")) return ["all"];
-    return [...new Set(normalized)];
-  }
-
-  const raw = String(access || "").trim();
-  if (!raw || raw.toLowerCase() === "all" || raw === "*") return ["all"];
-
-  const parsed = raw
-    .split(/\r?\n|,|\|/)
-    .map((item) => item.trim())
-    .filter(Boolean);
-
-  if (!parsed.length) return ["all"];
-  if (parsed.some((item) => item.toLowerCase() === "all" || item === "*")) return ["all"];
-  return [...new Set(parsed)];
-}
-
-function normalizeMembership(input) {
-  const id = String(input.id || "").trim();
-  const name = String(input.name || "").trim();
-  const interval = normalizeInterval(input.interval);
-  const price = Number(input.price);
-  const stripePriceId = String(input.stripePriceId || "").trim();
-  const tier = String(input.tier || "").trim() || "Base";
-  const highlight = String(input.highlight || "").trim() || "Membresia editable";
-  const perks = normalizePerks(input.perks);
-  const downloadAccessGameIds = normalizeDownloadAccess(input.downloadAccessGameIds ?? input.downloadAccess);
-
-  if (!id) throw new Error("membership id is required");
-  if (!name) throw new Error("membership name is required");
-  if (!Number.isFinite(price) || price <= 0) throw new Error("membership price must be a positive number");
-
-  return {
-    id,
-    name,
-    interval,
-    price,
-    stripePriceId: stripePriceId || `price_pass_${id}`,
-    tier,
-    highlight,
-    perks,
-    downloadAccessGameIds
   };
 }
 
@@ -237,48 +167,6 @@ export function updateMarketplaceGame(gameId, payload) {
   current.games[idx] = normalizeGame(merged);
   writeStore(current);
   return current.games[idx];
-}
-
-export function listMemberships() {
-  const current = readStore();
-  return current.memberships || [];
-}
-
-export function addMembership(payload) {
-  const next = normalizeMembership(payload);
-  const current = readStore();
-  if ((current.memberships || []).some((item) => item.id === next.id)) {
-    throw new Error("membership id already exists");
-  }
-
-  current.memberships = [...(current.memberships || []), next];
-  writeStore(current);
-  return next;
-}
-
-export function updateMembership(planId, payload) {
-  const id = String(planId || "").trim();
-  if (!id) throw new Error("membership id is required");
-
-  const current = readStore();
-  const idx = (current.memberships || []).findIndex((item) => item.id === id);
-  if (idx < 0) throw new Error("membership not found");
-
-  const merged = { ...current.memberships[idx], ...payload, id };
-  current.memberships[idx] = normalizeMembership(merged);
-  writeStore(current);
-  return current.memberships[idx];
-}
-
-export function removeMembership(planId) {
-  const id = String(planId || "").trim();
-  if (!id) throw new Error("membership id is required");
-
-  const current = readStore();
-  const before = (current.memberships || []).length;
-  current.memberships = (current.memberships || []).filter((item) => item.id !== id);
-  if (current.memberships.length === before) throw new Error("membership not found");
-  writeStore(current);
 }
 
 export function listCoupons() {

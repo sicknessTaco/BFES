@@ -28,59 +28,6 @@
       "image": "./imagenes/kogen.jpg"
     }
   ],
-  "memberships": [
-    {
-      "id": "bf-golden",
-      "name": "BF: Golden",
-      "interval": "mes",
-      "price": 120.99,
-      "stripePriceId": "price_pass_bf_golden",
-      "tier": "Base",
-      "highlight": "Experimenta La Forga a su maximo esplendor",
-      "downloadAccessGameIds": [
-        "aki-world",
-        "pk-abd"
-      ],
-      "perks": [
-        "Acceso al catalogo base",
-        "Pruebas anticipadas de nuevos builds",
-        "10% de descuento en compras"
-      ]
-    },
-    {
-      "id": "bf-nocturna",
-      "name": "BF: Nocturna",
-      "interval": "mes",
-      "price": 200,
-      "stripePriceId": "price_pass_bf_nocturna",
-      "tier": "Pro",
-      "highlight": "La Forja Nocturna abre sus puertas a los miembros mas exclusivos",
-      "downloadAccessGameIds": [
-        "all"
-      ],
-      "perks": [
-        "Todo lo de BF Golden",
-        "Lanzamientos dia 1",
-        "Contenido adicional exclusivo",
-        "Prioridad en servidores y eventos"
-      ]
-    },
-    {
-      "id": "bf-golden-anual",
-      "name": "BF: Golden",
-      "interval": "ano",
-      "price": 500,
-      "stripePriceId": "price_pass_bf_golden_year",
-      "tier": "Base",
-      "highlight": "La experiencia Golden para los que prefieren un pago Anual",
-      "downloadAccessGameIds": [
-        "all"
-      ],
-      "perks": [
-        "todo lo de BF: Golden pero por año"
-      ]
-    }
-  ],
   "coupons": [
     {
       "code": "FORJA10",
@@ -88,6 +35,7 @@
       "value": 10,
       "description": "10% de descuento en juegos del marketplace",
       "active": true,
+      "visible": true,
       "expires": "2026-12-31"
     },
     {
@@ -96,6 +44,7 @@
       "value": 15,
       "description": "$15 MXN de descuento en compra total",
       "active": true,
+      "visible": true,
       "expires": "2026-08-31"
     },
     {
@@ -104,6 +53,7 @@
       "value": 5,
       "description": "5% de descuento en todas las compras",
       "active": true,
+      "visible": false,
       "expires": "2026-08-31"
     }
   ]

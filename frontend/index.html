@@ -40,7 +40,7 @@
       <div class="flex flex-wrap gap-3 text-sm sm:text-base">
         <a href="./index.html" class="text-ember">Inicio</a>
         <a href="./juegos.html" class="hover:text-ember">Juegos</a>
-        <a href="./membresia.html" class="hover:text-ember">Membresia</a>
+        <a href="./descargas.html" class="hover:text-ember">Demos</a>
         <a href="./nosotros.html" class="hover:text-ember">Nosotros</a>
         <a href="./contacto.html" class="hover:text-ember">Contacto</a>
       </div>
@@ -50,22 +50,26 @@
     <section class="glass rounded-3xl p-8 reveal" data-reveal>
       <p class="text-ember tracking-[3px] uppercase text-xs">Estudio propio</p>
       <h1 class="font-display text-4xl sm:text-5xl mt-3">Tienda oficial</h1>
+      <div class="mt-5 flex items-center gap-4">
+        <img src="./imagenes/logo.png" alt="BlackForge logo principal" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border border-red-500/40 shadow-[0_0_30px_rgba(216,11,23,.35)] bg-black/40" onerror="this.style.display='none';" />
+        <p class="text-zinc-300 text-sm sm:text-base">Logo oficial de BlackForge Entertainment Software.</p>
+      </div>
       <p id="editable-hero-quote" class="text-zinc-300 mt-4 text-lg">...</p>
       <div class="mt-6 flex gap-3 flex-wrap">
         <a href="./juegos.html" class="px-5 py-3 rounded-full bg-crimson hover:bg-red-600 animate-pulseAura">Ver juegos</a>
-        <a href="./membresia.html" class="px-5 py-3 rounded-full border border-white/30 hover:border-ember">Ver membresias</a>
+        <a href="./descargas.html" class="px-5 py-3 rounded-full border border-white/30 hover:border-ember">Ver demos</a>
       </div>
       <p id="editable-announce" class="mt-5 text-amber-300 text-sm"></p>
     </section>
 
     <section class="grid md:grid-cols-2 gap-4 reveal" data-reveal>
-      <article class="glass rounded-2xl p-5 border border-amber-300/40 animate-floaty">
-        <h2 class="font-display text-2xl text-amber-300">BF Golden</h2>
-        <p class="text-zinc-300 mt-1">Acceso a la Forga Dorada, todos los juegos y descuentos para los nuevos lanzamientos.</p>
+      <article class="glass rounded-2xl p-5 border border-red-500/40 animate-floaty">
+        <h2 class="font-display text-2xl text-red-300">Marketplace directo</h2>
+        <p class="text-zinc-300 mt-1">Compra tus juegos y descarga despues del pago.</p>
       </article>
-      <article class="glass rounded-2xl p-5 border border-red-400/60 shadow-[0_0_35px_rgba(216,11,23,.3)] animate-floaty" style="animation-delay:.35s">
-        <h2 class="font-display text-2xl text-red-300">BF: Nocturna</h2>
-        <p class="text-zinc-300 mt-1">La forja Nocturna, para aquellos que quieren la experiencia completa.</p>
+      <article class="glass rounded-2xl p-5 border border-amber-300/40 animate-floaty" style="animation-delay:.35s">
+        <h2 class="font-display text-2xl text-amber-300">Zona de demos</h2>
+        <p class="text-zinc-300 mt-1">Prueba demos y revisa lo nuevo del estudio.</p>
       </article>
     </section>
 
@@ -82,12 +86,10 @@
   </main>
 
   <footer class="max-w-7xl mx-auto px-4 sm:px-6 pb-8">
-    <section class="glass rounded-2xl p-4">
-      <p class="text-zinc-400 text-sm">BlackForge Entertainment Software</p>
-    </section>
+    <section class="glass rounded-2xl p-4"><p class="text-zinc-400 text-sm">BlackForge Entertainment Software</p></section>
   </footer>
 
-  <button id="admin-vignette" aria-label="Acceso interno" class="fixed bottom-2 right-2 w-6 h-6 rounded-full border border-white/10 bg-black/20 text-[10px] text-white/35 hover:text-white/80 hover:border-white/40 transition">•</button>
+  <button id="admin-vignette" aria-label="Acceso interno" class="fixed bottom-2 right-2 w-6 h-6 rounded-full border border-white/10 bg-black/20 text-[10px] text-white/35 hover:text-white/80 hover:border-white/40 transition">.</button>
 
   <section id="admin-login-panel" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm p-4">
     <div class="max-w-md mx-auto mt-[10vh] glass rounded-2xl p-5">
@@ -109,5 +111,4 @@
   <script src="./admin-gate.js"></script>
 </body>
 </html>
-
 

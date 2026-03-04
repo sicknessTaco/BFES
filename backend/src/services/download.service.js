@@ -1,7 +1,6 @@
-﻿import path from "path";
+import path from "path";
 import { fileURLToPath } from "url";
 import jwt from "jsonwebtoken";
-import { getMarketplaceCatalog } from "./marketplace.store.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,20 +33,5 @@ export function verifyDownloadToken(token) {
 }
 
 export function getDownloadableFiles(checkoutData) {
-  const catalog = getMarketplaceCatalog();
-
-  if (checkoutData.type === "membership") {
-    const requestedIds = Array.isArray(checkoutData.itemIds) && checkoutData.itemIds.length
-      ? checkoutData.itemIds.map((id) => String(id || "").trim()).filter(Boolean)
-      : null;
-
-    const sourceIds = requestedIds || (catalog.games || []).map((game) => game.id);
-    const resolved = sourceIds.map((id) => fileMap.get(id)).filter(Boolean);
-
-    if (requestedIds) return resolved;
-    if (resolved.length) return resolved;
-    return Array.from(fileMap.values());
-  }
-
   return (checkoutData.itemIds || []).map((id) => fileMap.get(id)).filter(Boolean);
 }
