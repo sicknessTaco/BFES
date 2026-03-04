@@ -74,6 +74,22 @@
       </section>
 
       <section class="glass rounded-3xl p-6">
+        <h2 class="font-display text-3xl">Noticias</h2>
+        <p class="text-zinc-300 mt-1">Publica paginas/noticias visibles en el sitio.</p>
+        <form id="news-form" class="mt-4 grid md:grid-cols-2 gap-3">
+          <input id="news-slug" placeholder="slug (ej. update-marzo)" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" />
+          <input id="news-title" placeholder="Titulo" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2" required />
+          <input id="news-summary" placeholder="Resumen corto" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2 md:col-span-2" />
+          <input id="news-cover" placeholder="Imagen portada (opcional)" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2 md:col-span-2" />
+          <textarea id="news-content" placeholder="Contenido completo" rows="6" class="bg-black/30 border border-white/20 rounded-lg px-3 py-2 md:col-span-2" required></textarea>
+          <label class="flex items-center gap-2"><input id="news-published" type="checkbox" checked>Publicada</label>
+          <button class="md:col-span-2 px-4 py-2 rounded-lg border border-white/20 hover:border-ember">Guardar noticia</button>
+        </form>
+        <p id="news-admin-status" class="mt-2 text-zinc-300"></p>
+        <div id="news-admin-list" class="grid md:grid-cols-2 gap-3 mt-3"></div>
+      </section>
+
+      <section class="glass rounded-3xl p-6">
         <h2 class="font-display text-3xl">Juegos y precios</h2>
         <p class="text-zinc-300 mt-1">Gestiona juegos y precios del marketplace.</p>
         <form id="game-form" class="mt-4 grid md:grid-cols-2 gap-3">

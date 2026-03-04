@@ -30,22 +30,38 @@
   <header class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
     <nav class="glass rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
       <div class="flex items-center gap-3"><img src="./imagenes/logo.png" alt="BlackForge logo" class="w-10 h-10 rounded-lg object-cover border border-white/20 bg-black/30" onerror="this.style.display='none';this.nextElementSibling.style.marginLeft='0';" /><p class="font-display text-lg tracking-[2px]">BLACKFORGE ENTERTAINMENT SOFTWARE</p></div>
-      <div class="flex flex-wrap gap-3 text-sm sm:text-base"><a href="./index.html" class="hover:text-ember">Inicio</a><a href="./juegos.html" class="hover:text-ember">Juegos</a><a href="./descargas.html" class="hover:text-ember">Demos</a><a href="./descargas.html" class="text-ember">Demos</a><a href="./faq.html" class="hover:text-ember">FAQ</a></div>
+      <div class="flex flex-wrap gap-3 text-sm sm:text-base"><a href="./index.html" class="hover:text-ember">Inicio</a><a href="./juegos.html" class="hover:text-ember">Juegos</a><a href="./descargas.html" class="text-ember">Demos</a><a href="./noticias.html" class="hover:text-ember">Noticias</a><a href="./faq.html" class="hover:text-ember">FAQ</a></div>
     </nav>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 pb-20 space-y-5">
     <section class="glass rounded-3xl p-6">
       <h1 class="font-display text-4xl">Demos</h1>
-      <p class="text-zinc-300 mt-2">Todas las demos llevan exclusivamente a la pagina de descarga.</p>
-      <div id="demo-download-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5"></div>
+      <p class="text-zinc-300 mt-2">Explora demos y abre su pagina exclusiva de descarga por ID.</p>
+      <div id="demo-page-bar" class="mt-4 flex flex-wrap gap-2"></div>
+    </section>
+
+    <section class="glass rounded-3xl p-6">
+      <div id="demo-download-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </section>
   </main>
 
   <script src="./editable-content.js"></script>
   <script>
     const grid = document.getElementById("demo-download-grid");
+    const pageBar = document.getElementById("demo-page-bar");
     const demos = (window.BFEditable && window.BFEditable.demos) ? window.BFEditable.demos : [];
+
+    const featured = demos.slice(0, 2);
+    pageBar.innerHTML = featured.map((demo) => `
+      <a href="/demo/${encodeURIComponent(demo.id || '')}" class="px-4 py-2 rounded-full border border-red-400/50 bg-black/20 hover:border-red-300 text-sm">
+        ${demo.title || "Demo"}
+      </a>
+    `).join("");
+
+    if (!featured.length) {
+      pageBar.innerHTML = '<p class="text-zinc-400">Sin demos destacadas.</p>';
+    }
 
     grid.innerHTML = demos.map((demo) => `
       <article class="glass rounded-2xl p-4 border border-white/15">
@@ -54,8 +70,8 @@
         </div>
         <h2 class="font-display text-xl mt-3">${demo.title || "Demo"}</h2>
         <p class="text-zinc-300 text-sm mt-2">${demo.summary || ""}</p>
-        <p class="text-zinc-500 text-xs mt-2">Build ${demo.version || "N/A"}</p>
-        <a href="./success.html" class="mt-3 inline-block px-4 py-2 rounded-lg bg-red-700 hover:bg-red-600">Ir a pagina de descarga</a>
+        <p class="text-zinc-500 text-xs mt-2">ID: ${demo.id || "N/A"} | Build ${demo.version || "N/A"}</p>
+        <a href="/demo/${encodeURIComponent(demo.id || '')}" class="mt-3 inline-block px-4 py-2 rounded-lg bg-red-700 hover:bg-red-600">Abrir pagina de demo</a>
       </article>
     `).join("");
 
@@ -65,4 +81,5 @@
   </script>
 </body>
 </html>
+
 
